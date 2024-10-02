@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "646460085112",
+    "project_id": "sehat-app-fyp",
+    "storage_bucket": "sehat-app-fyp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:646460085112:android:0387c0cef92ea6871aae8d",
+        "android_client_info": {
+          "package_name": "com.example.sehat_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIUO_TZ73HZ1XJ_Sw-fCM6ZV2wxJ4bve4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
