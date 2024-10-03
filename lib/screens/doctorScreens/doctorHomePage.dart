@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sehat_app/screens/doctorScreens/doctorProfile.dart';
 import 'package:sehat_app/widgets/doctorCategories.dart';
+import 'package:sehat_app/widgets/doctorDrawer.dart';
 
 class DoctorHomePage extends StatefulWidget {
-  const DoctorHomePage({super.key});
+  final String? full_name;
+  const DoctorHomePage({super.key, this.full_name});
 
   @override
   State<DoctorHomePage> createState() => _DoctorHomePageState();
@@ -16,7 +18,7 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(),
+      drawer: DoctorDrawer(),
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
         backgroundColor: Colors.grey.shade200,

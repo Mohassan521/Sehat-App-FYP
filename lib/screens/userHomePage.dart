@@ -7,7 +7,8 @@ import 'package:sehat_app/widgets/doctorsTile.dart';
 import 'package:sehat_app/widgets/drawer.dart';
 
 class UserHomePage extends StatefulWidget {
-  const UserHomePage({super.key});
+  final String? full_name;
+  const UserHomePage({super.key, this.full_name});
 
   @override
   State<UserHomePage> createState() => _UserHomePageState();
@@ -18,6 +19,7 @@ class _UserHomePageState extends State<UserHomePage> {
   // https://asset-cdn.lottiefiles
   @override
   Widget build(BuildContext context) {
+    print("getting full name in patient home page: ${widget.full_name}");
     return Scaffold(
       drawer: MyDrawer(),
       backgroundColor: Colors.grey.shade200,
@@ -208,6 +210,7 @@ class _UserHomePageState extends State<UserHomePage> {
             return DoctorsTile(image: imageUrl, name: name, role: role, location: location,onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => DoctorProfileScreen(
                 docData: data,
+                full_name: widget.full_name!,
               )));
             },);
           }).toList();

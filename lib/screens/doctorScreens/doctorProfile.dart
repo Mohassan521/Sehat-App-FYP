@@ -1,14 +1,45 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:sehat_app/screens/chatRoom.dart';
+import 'package:sehat_app/services/database_service.dart';
 
-class DoctorProfileScreen extends StatelessWidget {
+class DoctorProfileScreen extends StatefulWidget {
+  final String full_name;
   final Map<String, dynamic> docData;
 
-  const DoctorProfileScreen({super.key, required this.docData});
+  const DoctorProfileScreen({super.key, required this.docData, required this.full_name});
+
+  @override
+  State<DoctorProfileScreen> createState() => _DoctorProfileScreenState();
+}
+
+class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
+
+  final GetIt _getIt = GetIt.instance;
+
+  // late AuthService _authService;
+  // late NavigationService _navigationService;
+  // late AlertService _alertService;
+  late DatabaseService _databaseService;
+
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _databaseService = _getIt.get<DatabaseService>();
+  }
+  
   @override
   Widget build(BuildContext context) {
+    
+    print("Name of current user: ${FirebaseAuth.instance.currentUser?.email}");
+    
     final screenHeight = MediaQuery.of(context).size.height;
 
-    Map<String, bool> appointmentDaysMap = Map<String, bool>.from(docData['available_days']);
+    Map<String, bool> appointmentDaysMap = Map<String, bool>.from(widget.docData['available_days']);
     
 
     List<String> allDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -37,7 +68,7 @@ class DoctorProfileScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Dr. ${docData['display_name']}"),
+        title: Text("Dr. ${widget.docData['display_name']}"),
       ),
       body: Column(
         children: [
@@ -61,7 +92,7 @@ class DoctorProfileScreen extends StatelessWidget {
                     children: [
                       Text("Speciality:",style: TextStyle(fontSize: 16)),
                       Text(
-                        docData['Speciality'],
+                        widget.docData['Speciality'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -72,7 +103,7 @@ class DoctorProfileScreen extends StatelessWidget {
                     children: [
                       Text("Experience:",style: TextStyle(fontSize: 16)),
                       Text(
-                        '${docData['Experience']} years',
+                        '${widget.docData['Experience']} years',
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -83,7 +114,7 @@ class DoctorProfileScreen extends StatelessWidget {
                     children: [
                       Text("Location:",style: TextStyle(fontSize: 16)),
                       Text(
-                        docData['Location'],
+                        widget.docData['Location'],
                         textAlign: TextAlign.end,
                         style: TextStyle(fontSize: 16),
                       ),
@@ -95,7 +126,7 @@ class DoctorProfileScreen extends StatelessWidget {
                     children: [
                       Text("Appointment Fees:",style: TextStyle(fontSize: 16)),
                       Text(
-                        'Rs.${docData['Fees']}',
+                        'Rs.${widget.docData['Fees']}',
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -124,7 +155,7 @@ class DoctorProfileScreen extends StatelessWidget {
                     children: [
                       Text("Appointment Timings",style: TextStyle(fontSize: 16)),
                       Text(
-                        formatAppointmentTimings(docData['appointment_timings']),
+                        formatAppointmentTimings(widget.docData['appointment_timings']),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -151,8 +182,23 @@ class DoctorProfileScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      MaterialButton(onPressed: (){
-    
+                      MaterialButton(onPressed: ()async{
+                        print("Your user ID: ${FirebaseAuth.instance.currentUser?.uid}");
+                        print("Other person ID: ${widget.docData['user_id']}");
+                        final chatExists =
+                                await _databaseService.checkChatExists(
+                                    uid1: FirebaseAuth.instance.currentUser?.uid,
+                                    uid2: widget.docData['user_id']
+                                    );
+
+                            if (!chatExists) {
+                              await _databaseService.createNewChat(
+                                uid1: FirebaseAuth.instance.currentUser?.uid,
+                                uid2: widget.docData['user_id']
+                              );
+                            }
+
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRoom(docData: widget.docData, full_name: widget.full_name,)));
                       },
                       child: Row(
                         children: [

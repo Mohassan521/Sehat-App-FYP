@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sehat_app/Provider/provider.dart';
+import 'package:sehat_app/Utils/Utils.dart';
 import 'package:sehat_app/firebase_options.dart';
 import 'package:sehat_app/screens/adminScreens/addDoctor.dart';
 import 'package:sehat_app/screens/splashScreen.dart';
@@ -9,6 +10,7 @@ import 'package:sehat_app/screens/splashScreen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Utils().registerServices();
   runApp(const MyApp());
 }
 

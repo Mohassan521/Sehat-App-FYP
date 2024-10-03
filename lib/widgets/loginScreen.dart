@@ -29,6 +29,7 @@ class _LoginPageState extends State<LoginPage> {
 
       if (documentSnapshot.exists){
         String role = documentSnapshot.get('role');
+        String fullName = documentSnapshot.get("display_name");
 
         if (role == "Admin") {
           SharedPreferences sp = await SharedPreferences.getInstance();
@@ -42,14 +43,14 @@ class _LoginPageState extends State<LoginPage> {
           sp.setString("role", role);
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const UserHomePage()),
+            MaterialPageRoute(builder: (context) =>  UserHomePage(full_name: fullName,)),
           );
         } else if (role == "Doctor") {
           SharedPreferences sp = await SharedPreferences.getInstance();
           sp.setString("role", role);
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const DoctorHomePage()),
+            MaterialPageRoute(builder: (context) =>  DoctorHomePage(full_name: fullName,)),
           );
         } else {
           Utils().toastMessage('Invalid user role', Colors.red, Colors.white);
