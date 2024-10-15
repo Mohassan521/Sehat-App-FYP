@@ -25,6 +25,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => UserIdProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => DoctorProvider(),
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

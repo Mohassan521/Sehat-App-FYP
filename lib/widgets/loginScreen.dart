@@ -34,6 +34,7 @@ class _LoginPageState extends State<LoginPage> {
         if (role == "Admin") {
           SharedPreferences sp = await SharedPreferences.getInstance();
           sp.setString("role", role);
+          
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const AdminHomePage()),
@@ -41,16 +42,18 @@ class _LoginPageState extends State<LoginPage> {
         } else if (role == "Patient") {
           SharedPreferences sp = await SharedPreferences.getInstance();
           sp.setString("role", role);
+          sp.setString("fullName", fullName);
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) =>  UserHomePage(full_name: fullName,)),
+            MaterialPageRoute(builder: (context) =>  UserHomePage(full_name: sp.getString("fullName"),)),
           );
         } else if (role == "Doctor") {
           SharedPreferences sp = await SharedPreferences.getInstance();
           sp.setString("role", role);
+          sp.setString("fullName", fullName);
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) =>  DoctorHomePage(full_name: fullName,)),
+            MaterialPageRoute(builder: (context) =>  DoctorHomePage(full_name: sp.getString("fullName"),)),
           );
         } else {
           Utils().toastMessage('Invalid user role', Colors.red, Colors.white);

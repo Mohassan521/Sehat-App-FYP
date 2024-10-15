@@ -5,7 +5,8 @@ import 'package:sehat_app/screens/frontPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DoctorDrawer extends StatelessWidget {
-  const DoctorDrawer({super.key});
+  final String fullName;
+  const DoctorDrawer({super.key, required this.fullName});
 
   @override
   Widget build(BuildContext context) {
@@ -257,7 +258,7 @@ class DoctorDrawer extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChatsScreen()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChatsScreen(fullName: fullName)));
                     },
                     child: Row(
                       children: [

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
+import 'package:sehat_app/Provider/provider.dart';
 import 'package:sehat_app/screens/doctorScreens/doctorProfile.dart';
 import 'package:sehat_app/widgets/doctorCategories.dart';
 import 'package:sehat_app/widgets/doctorsTile.dart';
@@ -208,6 +210,8 @@ class _UserHomePageState extends State<UserHomePage> {
             String imageUrl = "assets/images/doctor1.jpg"; // Static image, you can modify this to fetch from Firestore if available
 
             return DoctorsTile(image: imageUrl, name: name, role: role, location: location,onTap: () {
+              Provider.of<DoctorProvider>(context, listen: false)
+                .setDoctorDetail(data);
               Navigator.push(context, MaterialPageRoute(builder: (context) => DoctorProfileScreen(
                 docData: data,
                 full_name: widget.full_name!,

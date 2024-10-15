@@ -18,7 +18,7 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: DoctorDrawer(),
+      drawer: DoctorDrawer(fullName: widget.full_name!,),
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
         backgroundColor: Colors.grey.shade200,

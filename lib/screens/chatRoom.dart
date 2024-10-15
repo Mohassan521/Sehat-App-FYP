@@ -50,7 +50,8 @@ class _ChatRoomState extends State<ChatRoom> {
     if (chatMessage.medias?.isNotEmpty ?? false) {
       if (chatMessage.medias?.first.type == MediaType.file) {
         Message message = Message(
-            senderID: chatMessage.user.firstName,
+            senderID: chatMessage.user.id,
+            senderName: chatMessage.user.firstName,
             content: chatMessage.medias?.first.fileName,
             messageType: MessageType.file,
             sentAt: Timestamp.fromDate(chatMessage.createdAt));
@@ -64,7 +65,8 @@ class _ChatRoomState extends State<ChatRoom> {
 
       if (chatMessage.medias?.first.type == MediaType.image) {
         Message message = Message(
-          senderID: chatMessage.user.firstName,
+          senderID: chatMessage.user.id,
+          senderName: chatMessage.user.firstName,
           content: chatMessage.medias?.first.url,
           messageType: MessageType.Image,
           sentAt: Timestamp.fromDate(chatMessage.createdAt),
@@ -78,14 +80,13 @@ class _ChatRoomState extends State<ChatRoom> {
       }
     } else {
       Message message = Message(
-          senderID: currentUser!.firstName,
+          senderID: currentUser!.id,
+          senderName: chatMessage.user.firstName,
           content: chatMessage.text,
           messageType: MessageType.Text,
           sentAt: Timestamp.fromDate(
             chatMessage.createdAt,
           ));
-
-      print("frst name of user: ${currentUser!.lastName}");
 
       await _databaseService.sendChatMessage(
           currentUser!.id, otherUser!.id, message);
@@ -177,7 +178,7 @@ class _ChatRoomState extends State<ChatRoom> {
                           height: 6,
                         ),
                         Text(
-                          widget.docData['Speciality'],
+                          widget.docData['Speciality'] ?? "Patient",
                           style: TextStyle(
                               color: Colors.grey.shade600, fontSize: 13),
                         ),
