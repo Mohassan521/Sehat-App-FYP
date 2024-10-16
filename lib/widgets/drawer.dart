@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sehat_app/screens/frontPage.dart';
+import 'package:sehat_app/screens/patientChats.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyDrawer extends StatelessWidget {
-  const MyDrawer({super.key});
+  final String full_name;
+  const MyDrawer({super.key, required this.full_name});
 
   @override
   Widget build(BuildContext context) {
@@ -96,33 +98,33 @@ class MyDrawer extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // SizedBox(
-                  //   height: 20,
-                  // ),
-                  // InkWell(
-                  //   onTap: () {
-                  //     Navigator.push(context, MaterialPageRoute(builder: (context) => SubscriptionForDoctors()));
-                  //   },
-                  //   child: Row(
-                  //     children: [
-                  //       Icon(
-                  //         Icons.subscriptions,
-                  //         color: Colors.black,
-                  //         size: 24,
-                  //       ),
-                  //       SizedBox(
-                  //         width: 10,
-                  //       ),
-                  //       Text(
-                  //         Localization.of(context)!.translate('subscription')!,
-                  //         style: TextStyle(
-                  //           fontSize: 17.5,
-                  //           fontWeight: FontWeight.bold,
-                  //         ),
-                  //       )
-                  //     ],
-                  //   ),
-                  // ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => PatientChats(fullName: full_name,)));
+                    },
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.chat,
+                          color: Colors.black,
+                          size: 24,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "Chats",
+                          style: TextStyle(
+                            fontSize: 17.5,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                   // SizedBox(
                   //   height: 20,
                   // ),

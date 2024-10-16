@@ -6,6 +6,7 @@ import 'package:sehat_app/Utils/Utils.dart';
 import 'package:sehat_app/screens/adminScreens/adminHomePage.dart';
 import 'package:sehat_app/screens/doctorScreens/doctorHomePage.dart';
 import 'package:sehat_app/screens/userHomePage.dart';
+import 'package:sehat_app/services/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,109 +18,58 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  void route() async {
-  try {
-    User? user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
-          .collection('registeredUsers')
-          .doc(user.uid)
-          .get();
-
-      if (documentSnapshot.exists){
-        String role = documentSnapshot.get('role');
-        String fullName = documentSnapshot.get("display_name");
-
-        if (role == "Admin") {
-          SharedPreferences sp = await SharedPreferences.getInstance();
-          sp.setString("role", role);
-          
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const AdminHomePage()),
+  
+  void signIn(String email, String password) async {
+    try {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.purple,
+              backgroundColor: Colors.white,
+            ),
           );
-        } else if (role == "Patient") {
-          SharedPreferences sp = await SharedPreferences.getInstance();
-          sp.setString("role", role);
-          sp.setString("fullName", fullName);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) =>  UserHomePage(full_name: sp.getString("fullName"),)),
-          );
-        } else if (role == "Doctor") {
-          SharedPreferences sp = await SharedPreferences.getInstance();
-          sp.setString("role", role);
-          sp.setString("fullName", fullName);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) =>  DoctorHomePage(full_name: sp.getString("fullName"),)),
-          );
-        } else {
-          Utils().toastMessage('Invalid user role', Colors.red, Colors.white);
-          print('Unexpected role found in the database.');
-        }
+        },
+      );
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      Navigator.pop(context); // Close the loading dialog
+      DatabaseService().route(context);
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context); // Close the loading dialog
+
+      if (e.code == 'user-not-found') {
+        Utils().toastMessage(
+            'No account found with this email.', Colors.orange, Colors.white);
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        Utils().toastMessage(
+            'Incorrect password. Please try again.', Colors.red, Colors.white);
+        print('Wrong password provided for that user.');
+      } else if (e.code == 'network-request-failed') {
+        Utils().toastMessage('Network error. Please check your connection.',
+            Colors.red, Colors.white);
+        print('Network request failed.');
+      } else if (e.code == 'user-disabled') {
+        Utils().toastMessage('Your account has been disabled. Contact support.',
+            Colors.red, Colors.white);
+        print('User account is disabled.');
       } else {
-        Utils().toastMessage('No user data found. Please contact support.', Colors.orange, Colors.white);
-        print('Document does not exist on the database.');
+        Utils().toastMessage('Error: ${e.message}', Colors.red, Colors.white);
+        print('FirebaseAuth error: ${e.message}');
       }
-    } else {
-      Utils().toastMessage('User not authenticated.',Colors.orange, Colors.white);
+    } catch (e) {
+      Navigator.pop(context); // Close the loading dialog
+      Utils().toastMessage(
+          'An unexpected error occurred: $e', Colors.red, Colors.white);
+      print('Unexpected error: $e');
     }
-  } catch (e) {
-    Utils().toastMessage('An error occurred while routing: $e',Colors.red, Colors.white);
-    print('Error in routing: $e');
   }
-}
-
-void signIn(String email, String password) async {
-  try {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const Center(
-          child: CircularProgressIndicator(
-            color: Colors.purple,
-            backgroundColor: Colors.white,
-          ),
-        );
-      },
-    );
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-
-    Navigator.pop(context); // Close the loading dialog
-    route();
-  } on FirebaseAuthException catch (e) {
-    Navigator.pop(context); // Close the loading dialog
-
-    if (e.code == 'user-not-found') {
-      Utils().toastMessage('No account found with this email.',Colors.orange, Colors.white);
-      print('No user found for that email.');
-    } else if (e.code == 'wrong-password') {
-      Utils().toastMessage('Incorrect password. Please try again.',Colors.red, Colors.white);
-      print('Wrong password provided for that user.');
-    } else if (e.code == 'network-request-failed') {
-      Utils().toastMessage('Network error. Please check your connection.',Colors.red, Colors.white);
-      print('Network request failed.');
-    } else if (e.code == 'user-disabled') {
-      Utils().toastMessage('Your account has been disabled. Contact support.',Colors.red, Colors.white);
-      print('User account is disabled.');
-    } else {
-      Utils().toastMessage('Error: ${e.message}',Colors.red, Colors.white);
-      print('FirebaseAuth error: ${e.message}');
-    }
-  } catch (e) {
-    Navigator.pop(context); // Close the loading dialog
-    Utils().toastMessage('An unexpected error occurred: $e',Colors.red, Colors.white);
-    print('Unexpected error: $e');
-  }
-}
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +117,7 @@ void signIn(String email, String password) async {
               // generateLoginOTP();
             },
             child: Text(
-              "Login" ,
+              "Login",
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 18,

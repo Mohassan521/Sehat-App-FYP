@@ -13,7 +13,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: MyDrawer(),
+      // drawer: MyDrawer(),
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         title: Text("Admin Panel", style: TextStyle(color: Colors.white),),

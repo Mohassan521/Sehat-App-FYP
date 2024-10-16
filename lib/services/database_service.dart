@@ -1,8 +1,15 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:sehat_app/Utils/Utils.dart';
 import 'package:sehat_app/models/chatMessage.dart';
 import 'package:sehat_app/models/message.dart';
+import 'package:sehat_app/screens/adminScreens/adminHomePage.dart';
+import 'package:sehat_app/screens/doctorScreens/doctorHomePage.dart';
+import 'package:sehat_app/screens/userHomePage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DatabaseService {
 
@@ -13,6 +20,61 @@ class DatabaseService {
   }
 
   CollectionReference? _chatsCollection;
+
+  void route(BuildContext context) async {
+    try {
+      // await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+      var auth = FirebaseAuth.instance;
+
+      auth.authStateChanges().listen((User? user) async {
+        if (user != null ) {
+          DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+              .collection('registeredUsers')
+              .doc(user.uid)
+              .get();
+
+          print("user id during login ${user.uid}");
+
+          if (documentSnapshot.exists) {
+            String role = documentSnapshot.get('role') ?? 'Unknown Role';
+            String fullName = documentSnapshot.get("display_name") ??
+                'No Name'; // Null-safe fallback
+
+            SharedPreferences sp = await SharedPreferences.getInstance();
+            sp.setString("role", role);
+            sp.setString("fullName", fullName);
+
+            if (role == "Admin") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AdminHomePage()),
+          );
+        } else if (role == "Patient") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => UserHomePage(full_name: sp.getString("fullName") ?? '')),
+          );
+        } else if (role == "Doctor") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => DoctorHomePage(full_name: sp.getString("fullName") ?? '')),
+          );
+        } else {
+          Utils().toastMessage('Invalid user role', Colors.red, Colors.white);
+        }
+          }
+          else {
+        Utils().toastMessage('No user data found. Please contact support.', Colors.orange, Colors.white);
+      }
+        }
+      });
+    } catch (e) {
+      Utils().toastMessage(
+          'An error occurred while routing: $e', Colors.red, Colors.white);
+      print('Error in routing: $e');
+    }
+  }
+
 
   String generateChatId({required String uid1, required String uid2}) {
   List uids = [uid1, uid2];

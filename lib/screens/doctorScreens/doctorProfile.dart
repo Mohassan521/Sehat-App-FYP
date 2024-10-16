@@ -36,6 +36,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
   Widget build(BuildContext context) {
     
     print("Name of current user: ${FirebaseAuth.instance.currentUser?.email}");
+
+    
     
     final screenHeight = MediaQuery.of(context).size.height;
 

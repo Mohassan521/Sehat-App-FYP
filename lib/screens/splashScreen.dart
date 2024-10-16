@@ -6,6 +6,7 @@ import 'package:sehat_app/screens/doctorScreens/doctorHomePage.dart';
 import 'package:sehat_app/screens/frontPage.dart';
 import 'package:sehat_app/screens/userHomePage.dart';
 import 'package:sehat_app/screens/welcomeScreen.dart';
+import 'package:sehat_app/services/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -20,35 +21,10 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    isLogin();
+    // isLogin();
+    DatabaseService().route(context);
   }
 
-  void isLogin() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    String? role = sp.getString("role");
-
-    if (role == "Admin") {
-      Timer(Duration(seconds: 5), () {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => AdminHomePage()));
-      });
-    } else if (role == "Patient") {
-      Timer(Duration(seconds: 5), () {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => UserHomePage()));
-      });
-    } else if (role == "Doctor") {
-      Timer(Duration(seconds: 5), () {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => DoctorHomePage()));
-      });
-    } else if (role == null || role == "") {
-      Timer(Duration(seconds: 5), () {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => WelcomeScreen()));
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

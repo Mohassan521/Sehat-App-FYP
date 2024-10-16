@@ -23,7 +23,7 @@ class _UserHomePageState extends State<UserHomePage> {
   Widget build(BuildContext context) {
     print("getting full name in patient home page: ${widget.full_name}");
     return Scaffold(
-      drawer: MyDrawer(),
+      drawer: MyDrawer(full_name: widget.full_name!,),
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
         backgroundColor: Colors.grey.shade200,
@@ -209,9 +209,10 @@ class _UserHomePageState extends State<UserHomePage> {
              // Assuming 'speciality' exists in your Firestore
             String imageUrl = "assets/images/doctor1.jpg"; // Static image, you can modify this to fetch from Firestore if available
 
+            print("Doctor data object: ${data['display_name']}");
+
             return DoctorsTile(image: imageUrl, name: name, role: role, location: location,onTap: () {
-              Provider.of<DoctorProvider>(context, listen: false)
-                .setDoctorDetail(data);
+              
               Navigator.push(context, MaterialPageRoute(builder: (context) => DoctorProfileScreen(
                 docData: data,
                 full_name: widget.full_name!,

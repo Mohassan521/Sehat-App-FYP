@@ -6,6 +6,7 @@ import 'package:sehat_app/Utils/Utils.dart';
 import 'package:sehat_app/firebase_options.dart';
 import 'package:sehat_app/screens/adminScreens/addDoctor.dart';
 import 'package:sehat_app/screens/splashScreen.dart';
+import 'package:sehat_app/services/database_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
