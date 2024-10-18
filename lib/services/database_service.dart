@@ -45,7 +45,7 @@ class DatabaseService {
           if (role == "Admin") {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const AdminHomePage()),
+              MaterialPageRoute(builder: (context) =>  AdminHomePage(full_name: sp.getString("fullName") ?? '',)),
             );
           } else if (role == "Patient") {
             Navigator.pushReplacement(

@@ -45,7 +45,7 @@ class MyDrawer extends StatelessWidget {
                         height: 12,
                       ),
                       Text(
-                        "User",
+                        full_name,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,

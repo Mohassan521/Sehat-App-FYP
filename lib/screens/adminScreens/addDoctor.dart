@@ -10,7 +10,6 @@ class AddDoctorScreen extends StatefulWidget {
 }
 
 class _AddDoctorScreenState extends State<AddDoctorScreen> {
-
   TextEditingController name = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController contact = TextEditingController();
@@ -19,6 +18,7 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
   TextEditingController speciality = TextEditingController();
   TextEditingController job_location = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController feesController = TextEditingController();
 
   List<String> days = [
     'Monday',
@@ -49,7 +49,8 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
         } else {
           // Ensure end time is after start time
           if (pickedTime.hour > startTime!.hour ||
-              (pickedTime.hour == startTime!.hour && pickedTime.minute > startTime!.minute)) {
+              (pickedTime.hour == startTime!.hour &&
+                  pickedTime.minute > startTime!.minute)) {
             endTime = pickedTime;
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -85,25 +86,35 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
 
   final _auth = FirebaseAuth.instance;
 
-  postDetailsToFirestore(String email, String role, String display_name, String speciality, String experience, String location, String dob ) async {
+  postDetailsToFirestore(
+      String email,
+      String role,
+      String display_name,
+      String speciality,
+      String experience,
+      String location,
+      String dob,
+      String fees) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     var user = _auth.currentUser;
 
-    String formattedStartTime = "${startTime?.hour.toString().padLeft(2, '0')}:${startTime?.minute.toString().padLeft(2, '0')}";
-    String formattedEndTime = "${endTime?.hour.toString().padLeft(2, '0')}:${endTime?.minute.toString().padLeft(2, '0')}";
-
+    String formattedStartTime =
+        "${startTime?.hour.toString().padLeft(2, '0')}:${startTime?.minute.toString().padLeft(2, '0')}";
+    String formattedEndTime =
+        "${endTime?.hour.toString().padLeft(2, '0')}:${endTime?.minute.toString().padLeft(2, '0')}";
 
     CollectionReference ref =
         FirebaseFirestore.instance.collection('registeredUsers');
     ref.doc(user!.uid).set({
-      'user_id' : user.uid,
+      'user_id': user.uid,
       'email': emailController.text,
       'role': role,
       'display_name': display_name,
-      'Speciality' : speciality,
-      'Experience' : experience,
-      'Location' : location,
-      'Date_of_birth' : dob,
+      'Speciality': speciality,
+      'Experience': experience,
+      "Fees": fees,
+      'Location': location,
+      'Date_of_birth': dob,
       'appointment_timings': {
         'from': formattedStartTime,
         'to': formattedEndTime,
@@ -112,15 +123,23 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
     });
   }
 
-  void signUp(String email, String password, String role, String displayName, String speciality, String experience, String location, String dob) async {
+  void signUp(
+      String email,
+      String password,
+      String role,
+      String displayName,
+      String speciality,
+      String experience,
+      String location,
+      String dob,
+      String fees) async {
     CircularProgressIndicator();
     await _auth
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((value) => {
-          postDetailsToFirestore(email, role, displayName,speciality, experience, location, dob),
-          
-        }
-        )
+              postDetailsToFirestore(email, role, displayName, speciality,
+                  experience, location, dob, fees),
+            })
         .catchError((e) {
       print(e.toString());
     });
@@ -130,7 +149,11 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Doctor", style: TextStyle(color: Colors.white),),
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text(
+          "Add Doctor",
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
         backgroundColor: Colors.purple,
       ),
@@ -175,12 +198,29 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
                 height: 10,
               ),
               Text("Date Of Birth"),
-              SizedBox(
-                height: 5,
-              ),
+              SizedBox(height: 5),
               TextFormField(
                 controller: dob,
-                decoration: InputDecoration(border: OutlineInputBorder()),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                ),
+                readOnly: true, // Disable typing
+                onTap: () async {
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate:
+                        DateTime.now(), // The current date as the default
+                    firstDate: DateTime(1900), // The earliest allowable date
+                    lastDate:
+                        DateTime.now(), // The latest allowable date (today)
+                  );
+
+                  if (pickedDate != null) {
+                    // Format the date and set it to the controller
+                    dob.text =
+                        "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+                  }
+                },
               ),
               SizedBox(
                 height: 10,
@@ -191,6 +231,7 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
               ),
               TextFormField(
                 controller: experience,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(border: OutlineInputBorder()),
               ),
               SizedBox(
@@ -213,6 +254,18 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
               ),
               TextFormField(
                 controller: job_location,
+                decoration: InputDecoration(border: OutlineInputBorder()),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text("Appointment Fees"),
+              SizedBox(
+                height: 5,
+              ),
+              TextFormField(
+                controller: feesController,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(border: OutlineInputBorder()),
               ),
               SizedBox(
@@ -246,36 +299,37 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Start Time"),
-                ElevatedButton(
-                  onPressed: () => _pickTime(context, true),
-                  child: Text(_formatTime(startTime)),
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("End Time"),
-                ElevatedButton(
-                  onPressed: startTime == null
-                      ? null
-                      : () => _pickTime(context, false),
-                  child: Text(_formatTime(endTime)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: startTime == null ? Colors.grey : null, // Disable button if no start time
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Start Time"),
+                      ElevatedButton(
+                        onPressed: () => _pickTime(context, true),
+                        child: Text(_formatTime(startTime)),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("End Time"),
+                      ElevatedButton(
+                        onPressed: startTime == null
+                            ? null
+                            : () => _pickTime(context, false),
+                        child: Text(_formatTime(endTime)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: startTime == null
+                              ? Colors.grey
+                              : null, // Disable button if no start time
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
               SizedBox(
                 height: 10,
               ),
-
               Text("Password"),
               SizedBox(
                 height: 5,
@@ -284,14 +338,23 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
                 controller: passwordController,
                 decoration: InputDecoration(border: OutlineInputBorder()),
               ),
-
-              MaterialButton(onPressed: (){
-                signUp(emailController.text, passwordController.text, role, name.text, speciality.text, experience.text, job_location.text, dob.text);
-              },
-              child: Text("Submit"),
-              minWidth: double.infinity,
-              color: Colors.purple,
-              textColor: Colors.white,
+              MaterialButton(
+                onPressed: () {
+                  signUp(
+                      emailController.text,
+                      passwordController.text,
+                      role,
+                      name.text,
+                      speciality.text,
+                      experience.text,
+                      job_location.text,
+                      dob.text,
+                      feesController.text);
+                },
+                child: Text("Submit"),
+                minWidth: double.infinity,
+                color: Colors.purple,
+                textColor: Colors.white,
               )
             ],
           ),

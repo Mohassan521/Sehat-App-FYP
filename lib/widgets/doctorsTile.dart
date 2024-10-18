@@ -7,7 +7,8 @@ class DoctorsTile extends StatelessWidget {
   final String role;
   final String location;
   final Function()? onTap;
-  const DoctorsTile({super.key, required this.image, required this.name, required this.role, required this.location, this.onTap});
+  final String tag;
+  const DoctorsTile({super.key, required this.image, required this.name, required this.role, required this.location, this.onTap, required this.tag});
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +27,12 @@ class DoctorsTile extends StatelessWidget {
                         children: [
                           ClipRRect(
                               borderRadius: BorderRadius.circular(50),
-                              child: Image.asset(
-                                image,
-                                height: 100,
+                              child: Hero(
+                                tag: tag,
+                                child: Image.asset(
+                                  image,
+                                  height: 100,
+                                ),
                               )),
                           SizedBox(
                             height: 10,

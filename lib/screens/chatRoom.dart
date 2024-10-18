@@ -229,15 +229,17 @@ class _ChatRoomState extends State<ChatRoom> {
           //       builder: (context) => ImageViewerScreen(url: media.url), // Pass URL to image viewer
           //     ),
           //   );
-          // } else if (mimeType != null && 
-          //   (mimeType == 'application/msword' || 
-          //    mimeType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
-          //    mimeType == 'application/vnd.ms-excel' || 
-          //    mimeType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
-          //   // Open Word/Excel document externally
-          //   _openFileExternally(media.url, media.fileName); // Open URL externally using OpenFilex
           // } 
+ 
             
+          }
+          else if (mimeType != null && 
+            (mimeType == 'application/msword' || 
+             mimeType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+             mimeType == 'application/vnd.ms-excel' || 
+             mimeType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
+            // Open Word/Excel document externally
+            DocumentViewer(url: media.url,document_name: "",); // Open URL externally using OpenFilex
           }
           else{
             ScaffoldMessenger.of(context).showSnackBar(
