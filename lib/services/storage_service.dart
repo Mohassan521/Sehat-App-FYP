@@ -38,6 +38,20 @@ class StorageService {
     });
   }
 
+  Future<String?> uploadMedicineImages ({required File file}) async {
+    Reference fileRef = _firebaseStorage
+        .ref("medicines/")
+        .child("${DateTime.now().toIso8601String()}${p.extension(file.path)}");
+
+    UploadTask task = fileRef.putFile(file);
+
+    return task.then((value) {
+      if (value.state == TaskState.success) {
+        return fileRef.getDownloadURL();
+      }
+    });
+  }
+
   Future<String?> uploadChatPdfFiles(
       {required File file, required String chatID}) async {
     try {

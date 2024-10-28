@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sehat_app/screens/adminScreens/addDoctor.dart';
+import 'package:sehat_app/screens/adminScreens/addMedicines.dart';
+import 'package:sehat_app/widgets/adminCard.dart';
 import 'package:sehat_app/widgets/drawer.dart';
 
 class AdminHomePage extends StatefulWidget {
@@ -34,108 +36,23 @@ class _AdminHomePageState extends State<AdminHomePage> {
               mainAxisAlignment:
                   MainAxisAlignment.spaceEvenly, // Spacing between cards
               children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AddDoctorScreen()));
-                    },
-                    child: Card(
-                      elevation:
-                          3, // Slightly more elevation for a better shadow effect
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 40),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(Icons.add, size: 28, color: Colors.blueAccent),
-                            SizedBox(height: 10),
-                            Text(
-                              "Add Doctor",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                AdminOptionTiles(tileName: "Add Doctor", onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddDoctorScreen()));
+                },),
                 SizedBox(width: 10), // Add space between the two cards
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      // Handle tap for Add Admin
-                    },
-                    child: Card(
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 40),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(Icons.add,
-                                size: 28, color: Colors.blueAccent),
-                            SizedBox(height: 10),
-                            Text(
-                              "Add Admin",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                AdminOptionTiles(tileName: "Add Admin", onTap: () {
+                  
+                },),
+                
+                              ],
             ),
             SizedBox(height: 20), // Space between rows
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      // Handle tap for Add Medicines
-                    },
-                    child: Card(
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 40),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(Icons.add, size: 28, color: Colors.blueAccent),
-                            SizedBox(height: 10),
-                            Text(
-                              "Add Medicines",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                AdminOptionTiles(tileName: "Add Medicines", onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddMedicines()));
+                },),
                 SizedBox(width: 10), // Add space between the cards
                 Expanded(
                   child: Container(), // Add another card or keep it empty
