@@ -354,12 +354,12 @@ class MyDrawer extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => PatientChats(fullName: full_name,)));
+                      
                     },
                     child: Row(
                       children: [
                         Icon(
-                          Icons.chat,
+                          Icons.medication,
                           color: Colors.black,
                           size: 24,
                         ),

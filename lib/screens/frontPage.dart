@@ -43,7 +43,7 @@ class _FrontPageState extends State<FrontPage> {
       Column(
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.25,
+            height: MediaQuery.of(context).size.height * 0.22,
           ),
           Expanded(
             child: Container(

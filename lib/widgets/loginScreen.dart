@@ -81,13 +81,13 @@ class _LoginPageState extends State<LoginPage> {
             // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 20),
+              SizedBox(height: 15),
               Text(
                 "Login Yourself",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               // SizedBox(height: 10),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               TextFormField(
                 controller: emailController,
                 decoration: InputDecoration(
@@ -107,13 +107,13 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ],
           ),
-          SizedBox(
-            height: 30,
-          ),
+          // SizedBox(
+          //   height: 30,
+          // ),
           MaterialButton(
             onPressed: () {
               signIn(emailController.text, passwordController.text);
-
+      
               // generateLoginOTP();
             },
             child: Text(

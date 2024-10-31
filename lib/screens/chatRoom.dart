@@ -143,6 +143,12 @@ class _ChatRoomState extends State<ChatRoom> {
           elevation: 0,
           automaticallyImplyLeading: false,
           backgroundColor: Colors.white,
+          actions: [
+            IconButton(onPressed: (){
+              // print("Current user and other user ID: ${currentUser!.id} ${otherUser!.id}");
+              
+            }, icon: Icon(Icons.call))
+          ],
           flexibleSpace: SafeArea(
             child: Container(
               padding: const EdgeInsets.only(right: 16),

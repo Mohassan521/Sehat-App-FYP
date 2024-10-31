@@ -147,8 +147,8 @@ class _RegisterPageState extends State<RegisterPage> {
               ),),
               minWidth: double.infinity,
             padding: EdgeInsets.symmetric(vertical: 11),
-            textColor: Colors.black,
-            color: Color(0xfff89255),
+            textColor: Colors.white,
+            color: Colors.deepPurple.shade300,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
