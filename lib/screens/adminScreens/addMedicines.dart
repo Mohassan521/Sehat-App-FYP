@@ -61,8 +61,6 @@ class _AddMedicinesState extends State<AddMedicines> {
       "Prescription Required": presRequired,
       "Image": imagePath
     });
-    Utils().toastMessage(
-        "Medicine added Successfully", Colors.green, Colors.white);
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -421,7 +419,7 @@ class _AddMedicinesState extends State<AddMedicines> {
                         downloadURL!);
                   } else {
                     Utils().toastMessage(
-                        "Please select image", Colors.red, Colors.white);
+                        "Please enter data in all fields", Colors.red, Colors.white);
                   }
 
                   print(downloadURL);

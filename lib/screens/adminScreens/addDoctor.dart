@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sehat_app/widgets/completed.dart';
 
 class AddDoctorScreen extends StatefulWidget {
   const AddDoctorScreen({super.key});
@@ -121,6 +122,14 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
       },
       'available_days': selectedDays
     });
+
+    
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                CompletedAnyTask(message: "Doctor Added Succesfully")));
+
   }
 
   void signUp(
@@ -133,12 +142,12 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
       String location,
       String dob,
       String fees) async {
-    CircularProgressIndicator();
     await _auth
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((value) => {
               postDetailsToFirestore(email, role, displayName, speciality,
                   experience, location, dob, fees),
+              
             })
         .catchError((e) {
       print(e.toString());

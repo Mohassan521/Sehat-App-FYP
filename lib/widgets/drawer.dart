@@ -354,6 +354,33 @@ class MyDrawer extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => PatientChats(fullName: full_name,)));
+                    },
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.chat,
+                          color: Colors.black,
+                          size: 24,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "Medicines Inventory",
+                          style: TextStyle(
+                            fontSize: 17.5,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  InkWell(
+                    onTap: () {
                       // NetworkApiServices().logout();
                       // Navigator.pushReplacement(context,
                       //     MaterialPageRoute(builder: (context) => FrontPage()));
