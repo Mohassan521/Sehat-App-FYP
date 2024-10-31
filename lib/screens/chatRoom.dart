@@ -9,6 +9,7 @@ import 'package:mime/mime.dart';
 import 'package:path/path.dart' as path;
 import 'package:sehat_app/models/chatMessage.dart';
 import 'package:sehat_app/models/message.dart';
+import 'package:sehat_app/screens/callScreen.dart';
 import 'package:sehat_app/services/database_service.dart';
 import 'package:sehat_app/services/media_service.dart';
 import 'package:sehat_app/services/storage_service.dart';
@@ -26,6 +27,8 @@ class ChatRoom extends StatefulWidget {
 class _ChatRoomState extends State<ChatRoom> {
 
   ChatUser? currentUser, otherUser;
+  // final TextEditingController _channelController = TextEditingController();
+  String _channelController = "";
 
   final GetIt _getIt = GetIt.instance;
   late DatabaseService _databaseService;
@@ -146,7 +149,11 @@ class _ChatRoomState extends State<ChatRoom> {
           actions: [
             IconButton(onPressed: (){
               // print("Current user and other user ID: ${currentUser!.id} ${otherUser!.id}");
-              
+              _channelController = currentUser!.id;
+              if(_channelController.isNotEmpty){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CallScreen(channelName: _channelController,)));
+              }
+
             }, icon: Icon(Icons.call))
           ],
           flexibleSpace: SafeArea(
@@ -168,7 +175,7 @@ class _ChatRoomState extends State<ChatRoom> {
                   ),
                   CircleAvatar(
                     backgroundImage:
-                        AssetImage("assets/images/doctor1.jpg"),
+                        AssetImage(widget.docData["role"] == "Doctor" ? "assets/images/doctor1.jpg" : "assets/images/no-photo.jpg"),
                     maxRadius: 20,
                   ),
                   SizedBox(

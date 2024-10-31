@@ -140,8 +140,8 @@ class _PatientChatsState extends State<PatientChats> {
                             // Truncate long text if needed
                             String fullMessage =
                                 lastMessage['content'] ?? "No message content";
-                            if (fullMessage.length > 30) {
-                              messageContent = fullMessage.substring(0, 30) +
+                            if (fullMessage.length > 20) {
+                              messageContent = fullMessage.substring(0, 10) +
                                   "..."; // Show the first 30 characters followed by "..."
                             } else {
                               messageContent =
