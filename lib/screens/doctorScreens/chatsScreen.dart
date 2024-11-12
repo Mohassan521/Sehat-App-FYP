@@ -156,7 +156,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                             leading: ClipRRect(
                               borderRadius: BorderRadius.circular(40),
                               child: Image.asset(
-                                "assets/images/doctor1.jpg",
+                                "assets/images/no-photo.jpg",
                                 width: MediaQuery.sizeOf(context).width * 0.15,
                               ),
                             ),

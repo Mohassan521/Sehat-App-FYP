@@ -124,6 +124,7 @@ class _PatientChatsState extends State<PatientChats> {
                         var docName = docData['display_name'] ?? "Unknown";
                         var docId = docData['user_id'] ?? "Unknown";
 
+
                         // Ensure the messages exist and access the first message
                         if (chatData['messages'] != null &&
                             chatData['messages'].isNotEmpty) {
@@ -180,8 +181,7 @@ class _PatientChatsState extends State<PatientChats> {
                             },
                             leading: ClipRRect(
                               borderRadius: BorderRadius.circular(40),
-                              child: Image.asset(
-                                "assets/images/doctor1.jpg",
+                              child: Image.asset("assets/images/doctor1.jpg",
                                 width: MediaQuery.sizeOf(context).width * 0.15,
                               ),
                             ),
