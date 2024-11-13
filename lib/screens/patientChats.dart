@@ -3,8 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:sehat_app/Provider/provider.dart';
 import 'package:sehat_app/screens/chatRoom.dart';
 import 'package:sehat_app/services/database_service.dart';
 

@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:sehat_app/Provider/provider.dart';
 import 'package:sehat_app/Utils/Utils.dart';
 import 'package:sehat_app/screens/frontPage.dart';
 // import 'package:pashusevak/widgets/loginScreen.dart';
@@ -30,7 +28,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    final userIdProvider = Provider.of<UserIdProvider>(context);
 
     postDetailsToFirestore(String email, String role, String display_name) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
