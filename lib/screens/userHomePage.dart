@@ -56,7 +56,7 @@ class _UserHomePageState extends State<UserHomePage> {
                         decoration: BoxDecoration(
                             color: Colors.deepPurple.shade100,
                             borderRadius: BorderRadius.circular(12)),
-                        child: Icon(Icons.person)),
+                        child: const Icon(Icons.shopping_bag)),
                   ],
                 ),
               ),

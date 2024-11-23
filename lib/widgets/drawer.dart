@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sehat_app/screens/frontPage.dart';
+import 'package:sehat_app/screens/medicines_inventory.dart';
 import 'package:sehat_app/screens/patientChats.dart';
+import 'package:sehat_app/screens/userHomePage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -72,6 +74,34 @@ class MyDrawer extends StatelessWidget {
                   ),
                   SizedBox(
                     height: 28,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(full_name: full_name,)));
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.home,
+                          color: Colors.black,
+                          size: 24,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "Home",
+                          style: TextStyle(
+                            fontSize: 17.5,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
                   ),
                   InkWell(
                     onTap: () {
@@ -354,7 +384,7 @@ class MyDrawer extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MedicineInventory(full_name: full_name,)));
                     },
                     child: Row(
                       children: [
