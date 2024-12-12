@@ -31,28 +31,72 @@ class DatabaseService {
 
   
   void createCartTable(Database db) async {
+    print("Creating Cart table...");
     await db.execute(
         'CREATE TABLE Cart (id INTEGER PRIMARY KEY AUTOINCREMENT, userId TEXT NOT NULL ,medName TEXT NOT NULL, medPrice TEXT NOT NULL, qty INTEGER NOT NULL, medImage TEXT NOT NULL)');
+    print("Cart table Created");
   }
 
   Future<Database> _initDatabase() async {
-    final dbPath = await getDatabasesPath();
-    return openDatabase(
-      join(dbPath, "cart.db"),
-      version: 1,
-      onCreate: (db, version) {
-        createCartTable(db);
-      },
-    );
-  }
+  final dbPath = await getDatabasesPath();
+  print("Database path: $dbPath");
+  return openDatabase(
+    join(dbPath, "cartItems.db"),
+    version: 1,
+    onCreate: (db, version) {
+      print("Database created, initializing tables...");
+      createCartTable(db);
+    },
+  );
+}
 
 
   Future<void> insertCartItem(Map<String, dynamic> cartItem) async {
-    final db = await DatabaseService().database;
-    int id = await db.insert('Cart', cartItem,
-        conflictAlgorithm: ConflictAlgorithm.replace);
-    print("item added with ID: $id");
+  final db = await DatabaseService().database;
+
+  // Check if the item already exists
+  final existingItem = await db.query(
+    'Cart',
+    where: 'id = ?', // Assuming 'id' is the product ID column in your Cart table
+    whereArgs: [cartItem['id']],
+  );
+
+  if (existingItem.isNotEmpty) {
+    Utils().toastMessage("Item is already added in cart", Colors.red, Colors.white);
+    return; // Exit without inserting
   }
+
+  // Insert if the item doesn't exist
+  int id = await db.insert('Cart', cartItem);
+  print("Item added with ID: $id");
+}
+
+
+  Future<List<Map<String, dynamic>>> fetchUserCartItems(String userId) async {
+    final db = await DatabaseService().database; // Use DatabaseService
+  return await db.query(
+    'Cart',
+    where: 'userId = ?',
+    whereArgs: [userId],
+  );
+}
+
+Future<List<Map<String, dynamic>>> getCartItems() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? userId = prefs.getString('id');
+  if (userId != null) {
+     return await fetchUserCartItems(userId);
+  }
+  return [];
+}
+
+Future<bool> doesCartContainItems() async {
+  final db = await database;
+  final result = await db.rawQuery('SELECT * FROM Cart');
+  final count = Sqflite.firstIntValue(result);
+  print("Number of items in Cart: $count");
+  return count != null && count > 0;
+}
 
   Future<void> clearCart(String userId) async {
     final db = await database;

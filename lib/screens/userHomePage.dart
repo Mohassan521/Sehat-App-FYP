@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:sehat_app/screens/cartScreen.dart';
 import 'package:sehat_app/screens/doctorScreens/doctorProfile.dart';
+import 'package:sehat_app/services/database_service.dart';
 import 'package:sehat_app/widgets/doctorCategories.dart';
 import 'package:sehat_app/widgets/doctorsTile.dart';
 import 'package:sehat_app/widgets/drawer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserHomePage extends StatefulWidget {
   final String? full_name;
@@ -51,12 +54,21 @@ class _UserHomePageState extends State<UserHomePage> {
                         ),
                       ],
                     ),
-                    Container(
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                            color: Colors.deepPurple.shade100,
-                            borderRadius: BorderRadius.circular(12)),
-                        child: const Icon(Icons.shopping_bag)),
+                    InkWell(
+                      onTap: () async {
+                        SharedPreferences sp = await SharedPreferences.getInstance();
+                        DatabaseService().doesCartContainItems();
+                        String id = sp.getString("id") ?? "";
+                        print(id);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => CartScreen()));
+                      },
+                      child: Container(
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                              color: Colors.deepPurple.shade100,
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Text("View Cart", style: TextStyle(fontWeight: FontWeight.w800))),
+                    ),
                   ],
                 ),
               ),

@@ -109,7 +109,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 SizedBox(height: 17.5),
                 TextFormField(
                   controller: passworController,
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     border: OutlineInputBorder(),
