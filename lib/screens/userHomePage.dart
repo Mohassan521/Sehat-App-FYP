@@ -48,7 +48,7 @@ class _UserHomePageState extends State<UserHomePage> {
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
                         Text(
-                          "Random User",
+                          widget.full_name!,
                           style: TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),
@@ -57,7 +57,7 @@ class _UserHomePageState extends State<UserHomePage> {
                     InkWell(
                       onTap: () async {
                         SharedPreferences sp = await SharedPreferences.getInstance();
-                        DatabaseService().doesCartContainItems();
+                        // DatabaseService().doesCartContainItems();
                         String id = sp.getString("id") ?? "";
                         print(id);
                         Navigator.push(context, MaterialPageRoute(builder: (context) => CartScreen()));

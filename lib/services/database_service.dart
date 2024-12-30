@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:persistent_shopping_cart/model/cart_model.dart';
 import 'package:sehat_app/Utils/Utils.dart';
 import 'package:sehat_app/models/chatMessage.dart';
 import 'package:sehat_app/models/message.dart';
@@ -10,98 +11,151 @@ import 'package:sehat_app/screens/doctorScreens/doctorHomePage.dart';
 import 'package:sehat_app/screens/frontPage.dart';
 import 'package:sehat_app/screens/userHomePage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+// import 'package:sqflite/sqflite.dart';
+// import 'package:path/path.dart';
+import 'package:persistent_shopping_cart/persistent_shopping_cart.dart';
 
 class DatabaseService {
   final GetIt getIt = GetIt.instance;
-  static Database? _database;
+  // static Database? _database;
 
   DatabaseService() {
     _setupCollectionReferences();
+    // database;
   }
 
   CollectionReference? _chatsCollection;
 
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDatabase();
-    return _database!;
-  }
+//   Future<Map<String, dynamic>> getUserCart() async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   String? userId = prefs.getString('id'); // Fetch the current user's ID
+//   if (userId == null) {
+//     throw Exception('User ID not found. Ensure the user is logged in.');
+//   }
+
+//   // Use a unique cart key for each user
+//   final cartKey = "cart_$userId";
+//   return PersistentShoppingCart();
+// }
+
+// Future<void> addCartItem({
+//   required String userId,
+//   required String medName,
+//   required double medPrice,
+//   required int qty,
+//   required String medImage,
+// }) async {
+//   final cart = await getUserCart(); // Fetch the user's specific cart
+
+//   // Create a unique item ID for the cart (e.g., based on medicine name)
+//   final itemId = "$userId-$medName";
+
+//   // Add the item to the cart
+//   final cartItem = PersistentShoppingCartItem(
+//     productId: itemId,
+//     productName: medName,
+//     unitPrice: medPrice,
+//     quantity: qty,
+//     productImages: [medImage]
+//     // additionalData: {
+//     //   'medImage': medImage,
+//     //   'userId': userId,
+//     // },
+//   );
+
+//   await cart.addToCart(cartItem);
+
+//   print("Item added to cart for user $userId");
+// }
+
+// Future<List<PersistentShoppingCartItem>> getUserCartItems() async {
+//   final cart = await getUserCart(); // Fetch the user's specific cart
+//   return await cart.getCartData();
+// }
+
+//   Future<Database> get database async {
+//     if (_database != null) return _database!;
+//     _database = await _initDatabase();
+//     return _database!;
+//   }
 
   
-  void createCartTable(Database db) async {
-    print("Creating Cart table...");
-    await db.execute(
-        'CREATE TABLE Cart (id INTEGER PRIMARY KEY AUTOINCREMENT, userId TEXT NOT NULL ,medName TEXT NOT NULL, medPrice TEXT NOT NULL, qty INTEGER NOT NULL, medImage TEXT NOT NULL)');
-    print("Cart table Created");
-  }
+//   void createCartTable(Database db) async {
+//     print("Creating Cart table...");
+//     await db.execute(
+//         'CREATE TABLE Cart (id INTEGER PRIMARY KEY AUTOINCREMENT, userId TEXT NOT NULL ,medName TEXT NOT NULL, medPrice TEXT NOT NULL, qty INTEGER NOT NULL, medImage TEXT NOT NULL)');
+//     print("Cart table Created");
+//   }
 
-  Future<Database> _initDatabase() async {
-  final dbPath = await getDatabasesPath();
-  print("Database path: $dbPath");
-  return openDatabase(
-    join(dbPath, "cartItems.db"),
-    version: 1,
-    onCreate: (db, version) {
-      print("Database created, initializing tables...");
-      createCartTable(db);
-    },
-  );
-}
-
-
-  Future<void> insertCartItem(Map<String, dynamic> cartItem) async {
-  final db = await DatabaseService().database;
-
-  // Check if the item already exists
-  final existingItem = await db.query(
-    'Cart',
-    where: 'id = ?', // Assuming 'id' is the product ID column in your Cart table
-    whereArgs: [cartItem['id']],
-  );
-
-  if (existingItem.isNotEmpty) {
-    Utils().toastMessage("Item is already added in cart", Colors.red, Colors.white);
-    return; // Exit without inserting
-  }
-
-  // Insert if the item doesn't exist
-  int id = await db.insert('Cart', cartItem);
-  print("Item added with ID: $id");
-}
+//   Future<Database> _initDatabase() async {
+//   final dbPath = await getDatabasesPath();
+//   print("Database path: $dbPath");
+//   return openDatabase(
+//     join(dbPath, "cartItems.db"),
+//     version: 1,
+//     onCreate: (db, version) {
+//       print("Database created, initializing tables...");
+//       createCartTable(db);
+//     },
+//     onOpen: (db) {
+//       print("Database opened.");
+//     },
+//   );
+// }
 
 
-  Future<List<Map<String, dynamic>>> fetchUserCartItems(String userId) async {
-    final db = await DatabaseService().database; // Use DatabaseService
-  return await db.query(
-    'Cart',
-    where: 'userId = ?',
-    whereArgs: [userId],
-  );
-}
+//   Future<void> insertCartItem(Map<String, dynamic> cartItem) async {
+//   final db = await DatabaseService().database;
 
-Future<List<Map<String, dynamic>>> getCartItems() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? userId = prefs.getString('id');
-  if (userId != null) {
-     return await fetchUserCartItems(userId);
-  }
-  return [];
-}
+//   // Check if the item already exists for the same user
+//   final existingItem = await db.query(
+//     'Cart',
+//     where: 'userId = ? AND medName = ? AND qty = ? AND medPrice = ?',
+//     whereArgs: [cartItem['userId'], cartItem['medName'], cartItem['qty'], cartItem['medPrice']],
+//   );
 
-Future<bool> doesCartContainItems() async {
-  final db = await database;
-  final result = await db.rawQuery('SELECT * FROM Cart');
-  final count = Sqflite.firstIntValue(result);
-  print("Number of items in Cart: $count");
-  return count != null && count > 0;
-}
+//   if (existingItem.isNotEmpty) {
+//     Utils().toastMessage("Item is already added in cart", Colors.red, Colors.white);
+//     return; // Exit without inserting
+//   }
 
-  Future<void> clearCart(String userId) async {
-    final db = await database;
-    await db.delete('Cart', where: 'userId = ?', whereArgs: [userId]);
-  }
+//   // Insert if the item doesn't exist
+//   int id = await db.insert('Cart', cartItem);
+//   print("Item added with ID: $id");
+// }
+
+
+
+//   Future<List<Map<String, dynamic>>> fetchUserCartItems(String userId) async {
+//     final db = await DatabaseService().database; // Use DatabaseService
+//   return await db.query(
+//     'Cart',
+//     where: 'userId = ?',
+//     whereArgs: [userId],
+//   );
+// }
+
+// Future<List<Map<String, dynamic>>> getCartItems() async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   String? userId = prefs.getString('id');
+//   if (userId != null) {
+//      return await fetchUserCartItems(userId);
+//   }
+//   return [];
+// }
+
+// Future<bool> doesCartContainItems() async {
+//   final db = await database;
+//   final result = await db.rawQuery('SELECT * FROM Cart');
+//   final count = Sqflite.firstIntValue(result);
+//   print("Number of items in Cart: $count");
+//   return count != null && count > 0;
+// }
+
+//   Future<void> clearCart(String userId) async {
+//     final db = await database;
+//     await db.delete('Cart', where: 'userId = ?', whereArgs: [userId]);
+//   }
 
   void route(BuildContext context) async {
     try {
