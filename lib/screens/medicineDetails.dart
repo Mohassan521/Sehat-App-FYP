@@ -16,23 +16,16 @@ class MedicineDetails extends StatefulWidget {
 }
 
 class _MedicineDetailsState extends State<MedicineDetails> {
-
   double qty = 1;
-
-  void initializeCart () async {
-    await PersistentShoppingCart().init();
-  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    initializeCart();
   }
 
   @override
   Widget build(BuildContext context) {
-    
     final DatabaseService _databaseService = DatabaseService();
 
     return Scaffold(
@@ -226,44 +219,53 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                       print("quantity value: $qty");
                       SharedPreferences sp =
                           await SharedPreferences.getInstance();
-                      String user_id = sp.getString("id") ?? "";
-    String userId = sp.getString("id") ?? "";
-    
-    final cartItem = PersistentShoppingCartItem(
-      productId: DateTime.now().millisecondsSinceEpoch.toString(), // Unique ID for the item
-      productName: widget.medDetails["Medicine Name"],
-      unitPrice: qty * widget.medDetails["Price (per strip)"],
-      quantity: qty.toInt()  ,
-      productImages: [widget.medDetails["Image"]], 
-      productDetails: {
-        "user-id" : userId
-      }
-    );
+                      String userId = sp.getString("id") ?? "";
 
-    Map<String, dynamic> cartData = PersistentShoppingCart().getCartData();
-    List<PersistentShoppingCartItem> cartItems = cartData['cartItems'] ?? [];
+                      final cartItem = PersistentShoppingCartItem(
+                        productId: DateTime.now()
+                            .millisecondsSinceEpoch
+                            .toString(), // Use a unique identifier for the product
+                        productName: widget.medDetails["Medicine Name"],
+                        unitPrice: qty * widget.medDetails["Price (per strip)"],
+                        quantity: qty.toInt(),
+                        productImages: [widget.medDetails["Image"]],
+                        productDetails: {
+                          "user-id": userId,
+                        },
+                      );
 
-    // Check if the product is already in the cart for this user
-    print("cart item product id: ${cartItem.productId}");
-    bool alreadyInCart = cartItems.any((item) =>
-        item.productId == item.productId && item.productDetails!['user-id'] == userId);
+                      Map<String, dynamic> cartData =
+                          PersistentShoppingCart().getCartData();
+                      List<PersistentShoppingCartItem> cartItems =
+                          cartData['cartItems'] ?? [];
 
-    if (alreadyInCart) {
-      // Show a toast if the product is already in the cart
-      Utils().toastMessage("This product is already in the cart", Colors.red, Colors.white);
-    } else {
-      // Add the item to the cart if not already present
-      await PersistentShoppingCart().addToCart(cartItem);
-      Utils().toastMessage("Medicine Added to Cart", Colors.orange, Colors.white);
-    }
-                      
+                      // Check if the product is already in the cart for this user
+                      bool alreadyInCart = cartItems.any((item) =>
+                          item.productImages?.first ==
+                              cartItem
+                                  .productImages?.first && // Compare with the new item's productId
+                          item.productDetails?['user-id'] == userId);
+
+                      if (alreadyInCart) {
+                        // Show a toast if the product is already in the cart
+                        Utils().toastMessage(
+                            "This product is already in the cart",
+                            Colors.red,
+                            Colors.white);
+                      } else {
+                        // Add the item to the cart if not already present
+                        await PersistentShoppingCart().addToCart(cartItem);
+                        Utils().toastMessage("Medicine Added to Cart",
+                            Colors.orange, Colors.white);
+                      }
                     },
                     child: Center(child: Text("Add To Cart")),
                     padding: EdgeInsets.all(15),
                     color: Colors.orange,
                     textColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   SizedBox(
                     height: 30,

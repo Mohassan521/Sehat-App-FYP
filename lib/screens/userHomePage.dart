@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:persistent_shopping_cart/persistent_shopping_cart.dart';
 import 'package:sehat_app/screens/cartScreen.dart';
 import 'package:sehat_app/screens/doctorScreens/doctorProfile.dart';
 import 'package:sehat_app/services/database_service.dart';
@@ -19,6 +20,18 @@ class UserHomePage extends StatefulWidget {
 
 class _UserHomePageState extends State<UserHomePage> {
   // https://asset-cdn.lottiefiles
+
+  void initializeCart () async {
+    await PersistentShoppingCart().init();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initializeCart();
+  }
+
   @override
   Widget build(BuildContext context) {
     print("getting full name in patient home page: ${widget.full_name}");

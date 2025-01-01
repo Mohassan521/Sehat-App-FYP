@@ -173,11 +173,15 @@ class DatabaseService {
             String role = documentSnapshot.get('role') ?? 'Unknown Role';
             String fullName = documentSnapshot.get("display_name") ?? 'No Name';
             String user_id = documentSnapshot.get("user_id") ?? "";
+            String contact = documentSnapshot.get("contact") ?? "";
+            String address = documentSnapshot.get("parmanent_address") ?? "";
 
             SharedPreferences sp = await SharedPreferences.getInstance();
             sp.setString("role", role);
             sp.setString("fullName", fullName);
             sp.setString("id", user_id);
+            sp.setString("contact", contact);
+            sp.setString("address", address);
 
             if (role == "Admin") {
               Navigator.pushReplacement(

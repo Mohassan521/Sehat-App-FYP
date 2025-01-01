@@ -3,6 +3,7 @@ import 'package:input_quantity/input_quantity.dart';
 import 'package:persistent_shopping_cart/model/cart_model.dart';
 import 'package:persistent_shopping_cart/persistent_shopping_cart.dart';
 import 'package:sehat_app/Utils/Utils.dart';
+import 'package:sehat_app/screens/checkoutScreen.dart';
 import 'package:sehat_app/services/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,14 +15,11 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
   }
-
 
   Future<List<PersistentShoppingCartItem>> _fetchUserCartItems() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
@@ -42,13 +40,19 @@ class _CartScreenState extends State<CartScreen> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          Padding(padding: EdgeInsets.only(right: 10), child: InkWell(
-            onTap: () {
-              PersistentShoppingCart().clearCart();
-              Utils().toastMessage("Cart is clear now", Colors.black, Colors.white);
-            },
-            child: const Text("Clear Cart", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),)),)
-          
+          Padding(
+            padding: EdgeInsets.only(right: 10),
+            child: InkWell(
+                onTap: () {
+                  PersistentShoppingCart().clearCart();
+                  Utils().toastMessage(
+                      "Cart is clear now", Colors.black, Colors.white);
+                },
+                child: const Text(
+                  "Clear Cart",
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                )),
+          )
         ],
       ),
       body: Padding(
@@ -66,60 +70,51 @@ class _CartScreenState extends State<CartScreen> {
                 SizedBox(
                   height: 10,
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    FutureBuilder<List<PersistentShoppingCartItem>>(
-                            future: _fetchUserCartItems(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return Center(child: CircularProgressIndicator());
-                              } else if (snapshot.hasError) {
-                                return Center(child: Text('Error: ${snapshot.error}'));
-                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                return Center(child: Text('Your cart is empty'));
-                              }
-                    
-                              // Display cart items in a ListView
-                              final cartItems = snapshot.data!;
-                              return ListView.builder(
-                                                  shrinkWrap: true,
-                                                  itemCount: cartItems.length,
-                                                  itemBuilder: (context, index) {
-                                                    final item = cartItems[index];
-                                                    return Card(
-                                                      elevation: 1.2,
-                                                      child: ListTile(
-                                                      contentPadding: EdgeInsets.all(10),
-                                                      leading: Image.network(item.productImages!.first, fit: BoxFit.cover),
-                                                      title: Text(item.productName),
-                                                      subtitle: Text('Price: \$${item.unitPrice}\nQuantity: ${item.quantity}'),
-                                                      trailing: IconButton(
-                                                        icon: Icon(Icons.delete),
-                                                        onPressed: () async {
-                                                          await PersistentShoppingCart().removeFromCart(item.productId);
-                                                        },
-                                                      ),
-                                                    ),
-                                                    );
-                                                  },
-                              );
-                            },
+                FutureBuilder<List<PersistentShoppingCartItem>>(
+                  future: _fetchUserCartItems(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(
+                          child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData ||
+                        snapshot.data!.isEmpty) {
+                      return Center(child: Text('Your cart is empty'));
+                    }
+                
+                    // Display cart items in a ListView
+                    final cartItems = snapshot.data!;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: cartItems.length,
+                      itemBuilder: (context, index) {
+                        final item = cartItems[index];
+                        return Card(
+                          elevation: 1.2,
+                          child: ListTile(
+                            contentPadding: EdgeInsets.all(10),
+                            leading: Image.network(
+                                item.productImages!.first,
+                                fit: BoxFit.cover),
+                            title: Text(item.productName),
+                            subtitle: Text(
+                                'Price: \$${item.unitPrice}\nQuantity: ${item.quantity}'),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () async {
+                                await PersistentShoppingCart()
+                                    .removeFromCart(item.productId);
+                              },
+                            ),
                           ),
-                          
-                                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Total Price: ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-                        Text(PersistentShoppingCart().calculateTotalPrice().toString(), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),)
-                      ],
-                    ),
-                                  )
-                  ],
+                        );
+                      },
+                    );
+                  },
                 ),
-    
+
                 // FutureBuilder<List<Map<String, dynamic>>>(
                 //   future: DatabaseService().getCartItems(),
                 //   builder: (context, snapshot) {
@@ -140,7 +135,7 @@ class _CartScreenState extends State<CartScreen> {
                 //           child: ListTile(
                 //             contentPadding: EdgeInsets.all(12),
                 //           leading: Image.network(
-                            
+
                 //               "${items[index]["medImage"]}",),
                 //           title: Text("${items[index]["medName"]}"),
                 //           subtitle: Column(
@@ -165,24 +160,45 @@ class _CartScreenState extends State<CartScreen> {
                 //           // ),
                 //                                 ),
                 //         );
-            
+
                 //       },);
                 //   }
                 // )
               ],
             ),
-            MaterialButton(onPressed: ()async {
-              SharedPreferences sp = await SharedPreferences.getInstance();
-              String id = sp.getString("id") ?? "";
-              // DatabaseService().clearCart(id);
+            MaterialButton(
+              onPressed: () async {
+                SharedPreferences sp = await SharedPreferences.getInstance();
+                String id = sp.getString("id") ?? "";
+                String contact = sp.getString("contact") ?? "";
+                String address = sp.getString("address") ?? "";
+                
+                // DatabaseService().clearCart(id);
 
-            },
-            child: const Text("Proceed to Checkout"),
-            padding: EdgeInsets.all(16),
-            color: Colors.orange,
-            textColor: Colors.white,
-            minWidth: double.infinity,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                Map<String, dynamic> cartData =
+                    PersistentShoppingCart().getCartData();
+                List<PersistentShoppingCartItem> cartItems =
+                    cartData['cartItems'] ?? [];
+                double totalPrice =
+                    PersistentShoppingCart().calculateTotalPrice();
+
+                if (cartItems.isEmpty) {
+                  Utils().toastMessage(
+                      "Your cart is empty!", Colors.red, Colors.white);
+                  return;
+                }
+
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CheckOutScreen(user_id: id, cartItems: cartItems, totalPrice: totalPrice.toInt(), contact: contact, address: address,)));
+              },
+              child: Text("Proceed to Checkout (Total: ${PersistentShoppingCart()
+                                .calculateTotalPrice()
+                                .toString()})"),
+              padding: EdgeInsets.all(16),
+              color: Colors.orange,
+              textColor: Colors.white,
+              minWidth: double.infinity,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
             )
           ],
         ),
