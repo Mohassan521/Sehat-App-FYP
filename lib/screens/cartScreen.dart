@@ -15,11 +15,15 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+
+  
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
   }
+
+  List<PersistentShoppingCartItem> cartItems = [];
 
   Future<List<PersistentShoppingCartItem>> _fetchUserCartItems() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
@@ -27,7 +31,7 @@ class _CartScreenState extends State<CartScreen> {
 
     // Retrieve cart data
     Map<String, dynamic> cartData = PersistentShoppingCart().getCartData();
-    List<PersistentShoppingCartItem> cartItems = cartData['cartItems'] ?? [];
+    cartItems = cartData['cartItems'] ?? [];
 
     // Filter items for the current user
     return cartItems
@@ -175,10 +179,10 @@ class _CartScreenState extends State<CartScreen> {
                 
                 // DatabaseService().clearCart(id);
 
-                Map<String, dynamic> cartData =
-                    PersistentShoppingCart().getCartData();
-                List<PersistentShoppingCartItem> cartItems =
-                    cartData['cartItems'] ?? [];
+                // Map<String, dynamic> cartData =
+                //     PersistentShoppingCart().getCartData();
+                // List<PersistentShoppingCartItem> cartItems =
+                //     cartData['cartItems'] ?? [];
                 double totalPrice =
                     PersistentShoppingCart().calculateTotalPrice();
 

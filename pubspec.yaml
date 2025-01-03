@@ -55,6 +55,7 @@ dependencies:
   # sqflite: ^2.4.1
   persistent_shopping_cart: ^0.0.7
   input_quantity: ^2.5.0
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:

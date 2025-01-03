@@ -226,7 +226,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                             .millisecondsSinceEpoch
                             .toString(), // Use a unique identifier for the product
                         productName: widget.medDetails["Medicine Name"],
-                        unitPrice: qty * widget.medDetails["Price (per strip)"],
+                        unitPrice: (widget.medDetails["Price (per strip)"]).toDouble(),
                         quantity: qty.toInt(),
                         productImages: [widget.medDetails["Image"]],
                         productDetails: {

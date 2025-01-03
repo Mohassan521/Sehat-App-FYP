@@ -18,6 +18,8 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController _mobileController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController passworController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  
 
   bool passwordVisibility = false;
   var role = "Patient";
@@ -29,7 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
 
-    postDetailsToFirestore(String email, String role, String display_name) async {
+    postDetailsToFirestore(String email, String role, String display_name, String contact, String address) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     var user = _auth.currentUser;
     CollectionReference ref =
@@ -38,7 +40,9 @@ class _RegisterPageState extends State<RegisterPage> {
       'user_id' : user.uid,
       'email': _emailController.text,
       'role': role,
-      'display_name': display_name
+      'display_name': display_name,
+      'contact' : contact,
+      'parmanent_address' : address
     });
     Utils().toastMessage("User Registered Successfully", Colors.green, Colors.white);
     Navigator.pushReplacement(
@@ -46,12 +50,12 @@ class _RegisterPageState extends State<RegisterPage> {
     
   }
    
-    void signUp(String email, String password, String role, String displayName) async {
+    void signUp(String email, String password, String role, String displayName, String contact, String address) async {
     CircularProgressIndicator();
     await _auth
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((value) => {
-          postDetailsToFirestore(email, role, displayName),
+          postDetailsToFirestore(email, role, displayName, contact, address),
           
         }
         )
@@ -115,6 +119,15 @@ class _RegisterPageState extends State<RegisterPage> {
                     border: OutlineInputBorder(),
                   ),
                 ),
+                SizedBox(height: 17.5),
+                TextFormField(
+                  controller: addressController,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    labelText: 'Parmanent Address',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
                 // SizedBox(
                 //   height: 15,
                 // ),
@@ -136,7 +149,7 @@ class _RegisterPageState extends State<RegisterPage> {
               
               onPressed: () {
                 // registerUser();
-                signUp(_emailController.text, passworController.text, role, fullName.text);
+                signUp(_emailController.text, passworController.text, role, fullName.text, _mobileController.text, addressController.text);
               },
               child: Text("Register",style: TextStyle(
                 fontWeight: FontWeight.w500,

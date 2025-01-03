@@ -6,13 +6,33 @@ import 'package:sehat_app/screens/patientChats.dart';
 import 'package:sehat_app/screens/userHomePage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MyDrawer extends StatelessWidget {
+class MyDrawer extends StatefulWidget {
   final String full_name;
   const MyDrawer({super.key, required this.full_name});
 
   @override
-  Widget build(BuildContext context) {
+  State<MyDrawer> createState() => _MyDrawerState();
+}
 
+class _MyDrawerState extends State<MyDrawer> {
+
+    String role = "";
+
+    @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    preferences();
+  }
+
+    void preferences () async {
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      setState(() {
+        role = sp.getString("role") ?? "";  
+      });
+      
+    }
+  
     void logout () async {
       FirebaseAuth.instance.signOut();
       SharedPreferences sp = await SharedPreferences.getInstance();
@@ -20,6 +40,11 @@ class MyDrawer extends StatelessWidget {
         Navigator.push(context, MaterialPageRoute(builder: (context) => FrontPage()));
       });
     }
+
+  @override
+  Widget build(BuildContext context) {
+
+    print(role);
 
     return SafeArea(
       child: Drawer(
@@ -47,7 +72,7 @@ class MyDrawer extends StatelessWidget {
                         height: 12,
                       ),
                       Text(
-                        full_name,
+                        widget.full_name,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -73,35 +98,38 @@ class MyDrawer extends StatelessWidget {
                     ],
                   ),
                   SizedBox(
-                    height: 28,
+                    height: role == "Patient" ? 28 : 24,
                   ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(full_name: full_name,)));
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Icon(
-                          Icons.home,
-                          color: Colors.black,
-                          size: 24,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Home",
-                          style: TextStyle(
-                            fontSize: 17.5,
-                            fontWeight: FontWeight.bold,
+                  Visibility(
+                    visible: role == "Patient" ? true : false,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(full_name: widget.full_name,)));
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.home,
+                            color: Colors.black,
+                            size: 24,
                           ),
-                        )
-                      ],
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            "Home",
+                            style: TextStyle(
+                              fontSize: 17.5,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: role == "Patient" ? 20 : 0,
                   ),
                   InkWell(
                     onTap: () {
@@ -129,30 +157,33 @@ class MyDrawer extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: role == "Patient" ? 20 : 0,
                   ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => PatientChats(fullName: full_name,)));
-                    },
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.chat,
-                          color: Colors.black,
-                          size: 24,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Chats",
-                          style: TextStyle(
-                            fontSize: 17.5,
-                            fontWeight: FontWeight.bold,
+                  Visibility(
+                    visible: role == "Patient" ? true : false,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => PatientChats(fullName: widget.full_name,)));
+                      },
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.chat,
+                            color: Colors.black,
+                            size: 24,
                           ),
-                        )
-                      ],
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            "Chats",
+                            style: TextStyle(
+                              fontSize: 17.5,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   // SizedBox(
@@ -380,30 +411,33 @@ class MyDrawer extends StatelessWidget {
                   //   ),
                   // ),
                   SizedBox(
-                    height: 20,
+                     height: role == "Patient" ? 20 : 0,
                   ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => MedicineInventory(full_name: full_name,)));
-                    },
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.medication,
-                          color: Colors.black,
-                          size: 24,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Medicines Inventory",
-                          style: TextStyle(
-                            fontSize: 17.5,
-                            fontWeight: FontWeight.bold,
+                  Visibility(
+                    visible: role == "Patient" ? true : false,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => MedicineInventory(full_name: widget.full_name,)));
+                      },
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.medication,
+                            color: Colors.black,
+                            size: 24,
                           ),
-                        )
-                      ],
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            "Medicines Inventory",
+                            style: TextStyle(
+                              fontSize: 17.5,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(

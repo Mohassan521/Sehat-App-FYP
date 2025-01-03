@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_shopping_cart/model/cart_model.dart';
 import 'package:persistent_shopping_cart/persistent_shopping_cart.dart';
+import 'package:sehat_app/services/database_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CheckOutScreen extends StatefulWidget {
   final String user_id;
@@ -25,6 +27,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.cartItems.length);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -213,7 +216,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                           ),
                                         ConstrainedBox(
                                           constraints: BoxConstraints(
-                                            maxWidth: MediaQuery.sizeOf(context).width * 0.75
+                                            maxWidth: MediaQuery.sizeOf(context).width * 0.76
                                           ),
                                           child: Text(widget.address, style: TextStyle(fontSize: 15),))
                                         
@@ -223,8 +226,25 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  MaterialButton(onPressed: (){
-        
+                                  MaterialButton(onPressed: () async{
+
+                                    Map<String, dynamic> cartData = PersistentShoppingCart().getCartData();
+    List<PersistentShoppingCartItem> cartItems = cartData['cartItems'] ?? [];
+
+    String cartItemsMessage = cartItems.map((item) {
+      return "- ${item.productName} (x${item.quantity}): \$${item.unitPrice}";
+    }).join("\n");
+
+                                    SharedPreferences sp = await SharedPreferences.getInstance();
+                                    String name = sp.getString("fullName") ?? "";
+                                    String email = sp.getString("email") ?? "";
+                                    String subject = "Order Confirmation";
+                                    String message = "You have placed an order of Rs.${PersistentShoppingCart().calculateTotalPrice()} which includes $cartItemsMessage\n. Pharmacy manager will contact you shortly";
+
+                                    print(email);
+
+                                    DatabaseService().sendEmail(recepient: email ,name: name, email: email, subject: subject, message: message);
+                                    PersistentShoppingCart().clearCart();
                                   },
                                   child: Text("Checkout"),
                                   color: Colors.orange,

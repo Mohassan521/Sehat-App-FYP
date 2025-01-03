@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:sqflite/sqflite.dart';
 // import 'package:path/path.dart';
 import 'package:persistent_shopping_cart/persistent_shopping_cart.dart';
+import 'package:http/http.dart' as http;
 
 class DatabaseService {
   final GetIt getIt = GetIt.instance;
@@ -157,6 +160,36 @@ class DatabaseService {
 //     await db.delete('Cart', where: 'userId = ?', whereArgs: [userId]);
 //   }
 
+  Future sendEmail ({
+    required String recepient,
+    required String name,
+    required String email,
+    required String subject,
+    required String message,
+  }) async {
+    final url = Uri.parse("https://api.emailjs.com/api/v1.0/email/send");
+
+    final response = await http.post(url,
+      headers: {
+        'Content-Type' : 'application/json'
+      }
+     ,body: json.encode({
+      "service_id" : "service_ledhy4e",
+      "template_id" : "template_t0ojqq4",
+      "user_id" : "ZWrFny1RQdaBixAeC",
+      "accessToken" : "hIIuVk7P-Fg9nAADXbQ_W",
+      "template_params": {
+        "to_email" : recepient,
+        "to_name": name, // This corresponds to {{to_name}} in your template
+        "user_email": email, // If you want to pass the user's email
+        "user_subject": subject, // This corresponds to {{user_subject}} in your template
+        "user_message": message, // This corresponds to {{user_message}} in your template
+      }
+    }) );
+
+    print(response.body);
+  }
+
   void route(BuildContext context) async {
     try {
       var auth = FirebaseAuth.instance;
@@ -169,19 +202,23 @@ class DatabaseService {
               .doc(user.uid)
               .get();
 
+              // MNJNE49J45R4XYVHMQ9FV19S
+
           if (documentSnapshot.exists) {
             String role = documentSnapshot.get('role') ?? 'Unknown Role';
             String fullName = documentSnapshot.get("display_name") ?? 'No Name';
             String user_id = documentSnapshot.get("user_id") ?? "";
-            String contact = documentSnapshot.get("contact") ?? "";
-            String address = documentSnapshot.get("parmanent_address") ?? "";
+            String? contact = documentSnapshot.get("contact") ?? "";
+            String? address = documentSnapshot.get("parmanent_address") ?? "";
+            String email = documentSnapshot.get("email") ?? "";
 
             SharedPreferences sp = await SharedPreferences.getInstance();
             sp.setString("role", role);
             sp.setString("fullName", fullName);
             sp.setString("id", user_id);
-            sp.setString("contact", contact);
-            sp.setString("address", address);
+            sp.setString("contact", contact ?? "");
+            sp.setString("address", address ?? "");
+            sp.setString("email", email);
 
             if (role == "Admin") {
               Navigator.pushReplacement(

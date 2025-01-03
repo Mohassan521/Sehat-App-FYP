@@ -54,11 +54,12 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => AddMedicines()));
                 },),
                 SizedBox(width: 10), // Add space between the cards
-                Expanded(
-                  child: Container(), // Add another card or keep it empty
-                ),
+                AdminOptionTiles(tileName: "Display Orders", onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddMedicines()));
+                },),
               ],
             ),
+            
           ],
         ),
       ),
