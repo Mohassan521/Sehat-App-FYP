@@ -30,6 +30,7 @@ class CheckOutScreen extends StatefulWidget {
 class _CheckOutScreenState extends State<CheckOutScreen> {
   TextEditingController couponController = TextEditingController();
   String _selectedValue = "Cash On Delivery";
+  String status = "Order Pending";
 
   Future<void> postCartDetailsToFirestore() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
@@ -48,6 +49,8 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
 
     // Create an order document
     ordersRef.add({
+      "order_id" : DateTime.now().microsecond,
+      "Status" : status,
       'user_id': userId,
       'address': address,
       'username': username,
@@ -307,24 +310,25 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                 "You have placed an order of Rs.${widget.totalPrice} which includes $cartItemsMessage\n. Pharmacy manager will contact you shortly";
 
                             print(email);
+                            postCartDetailsToFirestore();
 
-                            DatabaseService()
-                                .sendEmail(
-                                    recepient: email,
-                                    name: name,
-                                    email: email,
-                                    subject: subject,
-                                    message: message)
-                                .then((_) {
-                              postCartDetailsToFirestore();
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const CompletedAnyTask(
-                                        path: 'assets/images/order-placed.json',
-                                          message:
-                                              "Order Placed. You will be contacted shortly. \n Email also sent for verification ")));
-                            });
+                            // DatabaseService()
+                            //     .sendEmail(
+                            //         recepient: email,
+                            //         name: name,
+                            //         email: email,
+                            //         subject: subject,
+                            //         message: message)
+                            //     .then((_) {
+                            //   postCartDetailsToFirestore();
+                            //   Navigator.push(
+                            //       context,
+                            //       MaterialPageRoute(
+                            //           builder: (context) => const CompletedAnyTask(
+                            //             path: 'assets/images/order-placed.json',
+                            //               message:
+                            //                   "Order Placed. You will be contacted shortly. \n Email also sent for verification ")));
+                            // });
                             // PersistentShoppingCart().clearCart();
                           },
                           child: Text("Checkout"),

@@ -131,6 +131,37 @@ class _MyDrawerState extends State<MyDrawer> {
                   SizedBox(
                     height: role == "Patient" ? 20 : 0,
                   ),
+                  Visibility(
+                    visible: role == "Patient" ? true : false,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(full_name: widget.full_name,)));
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.pending,
+                            color: Colors.black,
+                            size: 24,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            "Orders",
+                            style: TextStyle(
+                              fontSize: 17.5,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: role == "Patient" ? 20 : 0,
+                  ),
                   InkWell(
                     onTap: () {
                       // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen(sid: sid)));
