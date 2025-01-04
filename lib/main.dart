@@ -5,6 +5,7 @@ import 'package:sehat_app/firebase_options.dart';
 import 'package:sehat_app/screens/adminScreens/addDoctor.dart';
 import 'package:sehat_app/screens/splashScreen.dart';
 import 'package:sehat_app/services/database_service.dart';
+import 'package:sehat_app/widgets/completed.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const SplashScreen(),
+      // home: CompletedAnyTask(message: "hh", path: 'assets/images/order-placed.json'),
     );
   }
 }

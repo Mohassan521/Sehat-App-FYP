@@ -128,7 +128,7 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                CompletedAnyTask(message: "Doctor Added Succesfully")));
+                CompletedAnyTask(path: 'assets/images/done.json',message: "Doctor Added Succesfully")));
 
   }
 

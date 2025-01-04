@@ -65,7 +65,7 @@ class _AddMedicinesState extends State<AddMedicines> {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                CompletedAnyTask(message: "Medicine Added Succesfully")));
+                CompletedAnyTask(path: "'assets/images/done.json'",message: "Medicine Added Succesfully")));
   }
 
   @override

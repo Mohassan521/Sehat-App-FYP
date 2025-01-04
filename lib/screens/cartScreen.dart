@@ -16,14 +16,9 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
 
-  
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
 
   List<PersistentShoppingCartItem> cartItems = [];
+  List<PersistentShoppingCartItem> filteredCartItems = [];
 
   Future<List<PersistentShoppingCartItem>> _fetchUserCartItems() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
@@ -32,11 +27,28 @@ class _CartScreenState extends State<CartScreen> {
     // Retrieve cart data
     Map<String, dynamic> cartData = PersistentShoppingCart().getCartData();
     cartItems = cartData['cartItems'] ?? [];
-
-    // Filter items for the current user
-    return cartItems
+    filteredCartItems = cartItems
         .where((item) => item.productDetails?['user-id'] == userId)
         .toList();
+
+    // Filter items for the current user
+    return filteredCartItems;
+  }
+
+  double calculateUserTotalPrice() {
+  return filteredCartItems.fold(0.0, (total, item) => total + item.totalPrice);
+}
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fetchUserCartItems().then((_){
+      setState(() {
+        
+      });
+    });
   }
 
   @override
@@ -89,12 +101,13 @@ class _CartScreenState extends State<CartScreen> {
                     }
                 
                     // Display cart items in a ListView
-                    final cartItems = snapshot.data!;
+                    // final cartItems = snapshot.data!;
                     return ListView.builder(
                       shrinkWrap: true,
-                      itemCount: cartItems.length,
+                      itemCount: filteredCartItems.length,
                       itemBuilder: (context, index) {
-                        final item = cartItems[index];
+                        final item = filteredCartItems[index];
+                        print("items added to cart ${item.productId}");
                         return Card(
                           elevation: 1.2,
                           child: ListTile(
@@ -183,8 +196,9 @@ class _CartScreenState extends State<CartScreen> {
                 //     PersistentShoppingCart().getCartData();
                 // List<PersistentShoppingCartItem> cartItems =
                 //     cartData['cartItems'] ?? [];
-                double totalPrice =
-                    PersistentShoppingCart().calculateTotalPrice();
+                double filteredPrice =
+                    calculateUserTotalPrice();
+                print("total price $filteredPrice");
 
                 if (cartItems.isEmpty) {
                   Utils().toastMessage(
@@ -192,11 +206,9 @@ class _CartScreenState extends State<CartScreen> {
                   return;
                 }
 
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CheckOutScreen(user_id: id, cartItems: cartItems, totalPrice: totalPrice.toInt(), contact: contact, address: address,)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CheckOutScreen(user_id: id, cartItems: filteredCartItems, totalPrice: filteredPrice.toInt(), contact: contact, address: address,)));
               },
-              child: Text("Proceed to Checkout (Total: ${PersistentShoppingCart()
-                                .calculateTotalPrice()
-                                .toString()})"),
+              child: Text("Proceed to Checkout (Total: ${calculateUserTotalPrice()})"),
               padding: EdgeInsets.all(16),
               color: Colors.orange,
               textColor: Colors.white,
