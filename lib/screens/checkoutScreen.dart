@@ -310,25 +310,25 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                 "You have placed an order of Rs.${widget.totalPrice} which includes $cartItemsMessage\n. Pharmacy manager will contact you shortly";
 
                             print(email);
-                            postCartDetailsToFirestore();
+                            // postCartDetailsToFirestore();
 
-                            // DatabaseService()
-                            //     .sendEmail(
-                            //         recepient: email,
-                            //         name: name,
-                            //         email: email,
-                            //         subject: subject,
-                            //         message: message)
-                            //     .then((_) {
-                            //   postCartDetailsToFirestore();
-                            //   Navigator.push(
-                            //       context,
-                            //       MaterialPageRoute(
-                            //           builder: (context) => const CompletedAnyTask(
-                            //             path: 'assets/images/order-placed.json',
-                            //               message:
-                            //                   "Order Placed. You will be contacted shortly. \n Email also sent for verification ")));
-                            // });
+                            DatabaseService()
+                                .sendEmail(
+                                    recepient: email,
+                                    name: name,
+                                    email: email,
+                                    subject: subject,
+                                    message: message)
+                                .then((_) {
+                              postCartDetailsToFirestore();
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const CompletedAnyTask(
+                                        path: 'assets/images/order-placed.json',
+                                          message:
+                                              "Order Placed. You will be contacted shortly. \n Email also sent for verification ")));
+                            });
                             // PersistentShoppingCart().clearCart();
                           },
                           child: Text("Checkout"),

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sehat_app/screens/frontPage.dart';
 import 'package:sehat_app/screens/medicines_inventory.dart';
+import 'package:sehat_app/screens/orders.dart';
 import 'package:sehat_app/screens/patientChats.dart';
 import 'package:sehat_app/screens/userHomePage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -135,13 +136,13 @@ class _MyDrawerState extends State<MyDrawer> {
                     visible: role == "Patient" ? true : false,
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(full_name: widget.full_name,)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => OrdersScreen(full_name: widget.full_name,)));
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Icon(
-                            Icons.pending,
+                            Icons.production_quantity_limits,
                             color: Colors.black,
                             size: 24,
                           ),
