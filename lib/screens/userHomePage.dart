@@ -20,8 +20,11 @@ class UserHomePage extends StatefulWidget {
 
 class _UserHomePageState extends State<UserHomePage> {
   // https://asset-cdn.lottiefiles
+  String email = "";
 
-  void initializeCart () async {
+  void initializeCart() async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    email = sp.getString("email")!;
     await PersistentShoppingCart().init();
   }
 
@@ -35,6 +38,7 @@ class _UserHomePageState extends State<UserHomePage> {
   @override
   Widget build(BuildContext context) {
     print("getting full name in patient home page: ${widget.full_name}");
+    print("getting email in patient home page: $email");
     return Scaffold(
       drawer: MyDrawer(
         full_name: widget.full_name!,
@@ -69,18 +73,23 @@ class _UserHomePageState extends State<UserHomePage> {
                     ),
                     InkWell(
                       onTap: () async {
-                        SharedPreferences sp = await SharedPreferences.getInstance();
+                        SharedPreferences sp =
+                            await SharedPreferences.getInstance();
                         // DatabaseService().doesCartContainItems();
                         String id = sp.getString("id") ?? "";
                         print(id);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => CartScreen()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CartScreen()));
                       },
                       child: Container(
                           padding: EdgeInsets.all(12),
                           decoration: BoxDecoration(
                               color: Colors.deepPurple.shade100,
                               borderRadius: BorderRadius.circular(12)),
-                          child: Text("View Cart", style: TextStyle(fontWeight: FontWeight.w800))),
+                          child: Text("View Cart",
+                              style: TextStyle(fontWeight: FontWeight.w800))),
                     ),
                   ],
                 ),

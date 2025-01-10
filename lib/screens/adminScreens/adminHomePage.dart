@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sehat_app/screens/adminScreens/addDoctor.dart';
 import 'package:sehat_app/screens/adminScreens/addMedicines.dart';
+import 'package:sehat_app/screens/adminScreens/displayOrders.dart';
 import 'package:sehat_app/widgets/adminCard.dart';
 import 'package:sehat_app/widgets/drawer.dart';
 
@@ -36,30 +37,47 @@ class _AdminHomePageState extends State<AdminHomePage> {
               mainAxisAlignment:
                   MainAxisAlignment.spaceEvenly, // Spacing between cards
               children: [
-                AdminOptionTiles(tileName: "Add Doctor", onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddDoctorScreen()));
-                },),
+                AdminOptionTiles(
+                  tileName: "Add Doctor",
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddDoctorScreen()));
+                  },
+                ),
                 SizedBox(width: 10), // Add space between the two cards
-                AdminOptionTiles(tileName: "Add Admin", onTap: () {
-                  
-                },),
-                
-                              ],
+                AdminOptionTiles(
+                  tileName: "Add Admin",
+                  onTap: () {},
+                ),
+              ],
             ),
             SizedBox(height: 20), // Space between rows
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                AdminOptionTiles(tileName: "Add Medicines", onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddMedicines()));
-                },),
+                AdminOptionTiles(
+                  tileName: "Add Medicines",
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddMedicines()));
+                  },
+                ),
                 SizedBox(width: 10), // Add space between the cards
-                AdminOptionTiles(tileName: "Display Orders", onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddMedicines()));
-                },),
+                AdminOptionTiles(
+                  tileName: "Display Orders",
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DisplayOrders()));
+                  },
+                ),
               ],
             ),
-            
           ],
         ),
       ),

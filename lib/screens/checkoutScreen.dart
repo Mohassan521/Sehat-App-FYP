@@ -42,15 +42,17 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
     // Ensure you have the filtered items for the current user
     // await fetchUserCartItems(); // Ensure this function fetches updated data
 
-    int totalPrice = widget.totalPrice; // Calculating the total price
+    int totalPrice = widget.totalPrice;
+
+    String orderId = (100 + Random().nextInt(900)).toString();
 
     CollectionReference ordersRef =
         FirebaseFirestore.instance.collection('Orders');
 
     // Create an order document
-    ordersRef.add({
-      "order_id" : DateTime.now().microsecond,
-      "Status" : status,
+    ordersRef.doc(orderId).set({
+      "order_id": orderId,
+      "Status": status,
       'user_id': userId,
       'address': address,
       'username': username,
@@ -297,8 +299,9 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                             // List<PersistentShoppingCartItem> cartItems =
                             //     cartData['cartItems'] ?? [];
 
-                            String cartItemsMessage = widget.cartItems.map((item) {
-                              return "- ${item.productName} (x${item.quantity}): \$${item.unitPrice}";
+                            String cartItemsMessage =
+                                widget.cartItems.map((item) {
+                              return "- ${item.productName} (${item.quantity} pieces): \$${item.unitPrice} / unit";
                             }).join("\n");
 
                             SharedPreferences sp =
@@ -325,7 +328,8 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => const CompletedAnyTask(
-                                        path: 'assets/images/order-placed.json',
+                                          path:
+                                              'assets/images/order-placed.json',
                                           message:
                                               "Order Placed. You will be contacted shortly. \n Email also sent for verification ")));
                             });
