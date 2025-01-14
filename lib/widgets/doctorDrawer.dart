@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sehat_app/screens/doctorScreens/chatsScreen.dart';
 import 'package:sehat_app/screens/frontPage.dart';
+import 'package:sehat_app/screens/profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DoctorDrawer extends StatelessWidget {
@@ -10,12 +11,12 @@ class DoctorDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    void logout () async {
+    void logout() async {
       FirebaseAuth.instance.signOut();
       SharedPreferences sp = await SharedPreferences.getInstance();
-      sp.clear().then((v){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => FrontPage()));
+      sp.clear().then((v) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => FrontPage()));
       });
     }
 
@@ -76,6 +77,12 @@ class DoctorDrawer extends StatelessWidget {
                   InkWell(
                     onTap: () {
                       // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen(sid: sid)));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProfileScreen(
+                                    full_name: fullName,
+                                  )));
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -166,7 +173,7 @@ class DoctorDrawer extends StatelessWidget {
                   //           context,
                   //           MaterialPageRoute(
                   //               builder: (context) => PharmacyForDoctors(
-                                      
+
                   //                   )));
                   //   },
                   //   child: Row(
@@ -198,7 +205,7 @@ class DoctorDrawer extends StatelessWidget {
                   //           context,
                   //           MaterialPageRoute(
                   //               builder: (context) => EBookForDoctors(
-                                     
+
                   //                   )));
                   //   },
                   //   child: Row(
@@ -258,7 +265,11 @@ class DoctorDrawer extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChatsScreen(fullName: fullName)));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ChatsScreen(fullName: fullName)));
                     },
                     child: Row(
                       children: [
@@ -321,7 +332,7 @@ class DoctorDrawer extends StatelessWidget {
                   //           context,
                   //           MaterialPageRoute(
                   //               builder: (context) => SalesForDoctors(
-                                     
+
                   //                   )));
                   //   },
                   //   child: Row(
@@ -376,12 +387,10 @@ class DoctorDrawer extends StatelessWidget {
                   ),
                 ],
               ),
-          
             ],
           ),
         ),
       ),
     );
-
   }
 }

@@ -40,10 +40,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
       ),
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          "Hello, ${widget.full_name}",
-          style: TextStyle(color: Colors.white),
-        ),
         // centerTitle: true,
         backgroundColor: Colors.purple,
       ),

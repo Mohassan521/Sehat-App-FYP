@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sehat_app/screens/doctorScreens/chatsScreen.dart';
+import 'package:sehat_app/screens/doctorScreens/doctorHomePage.dart';
 import 'package:sehat_app/screens/frontPage.dart';
 import 'package:sehat_app/screens/medicines_inventory.dart';
 import 'package:sehat_app/screens/orders.dart';
 import 'package:sehat_app/screens/patientChats.dart';
+import 'package:sehat_app/screens/profile.dart';
 import 'package:sehat_app/screens/userHomePage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,35 +19,33 @@ class MyDrawer extends StatefulWidget {
 }
 
 class _MyDrawerState extends State<MyDrawer> {
+  String role = "";
 
-    String role = "";
-
-    @override
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
     preferences();
   }
 
-    void preferences () async {
-      SharedPreferences sp = await SharedPreferences.getInstance();
-      setState(() {
-        role = sp.getString("role") ?? "";  
-      });
-      
-    }
-  
-    void logout () async {
-      FirebaseAuth.instance.signOut();
-      SharedPreferences sp = await SharedPreferences.getInstance();
-      sp.clear().then((v){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => FrontPage()));
-      });
-    }
+  void preferences() async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    setState(() {
+      role = sp.getString("role") ?? "";
+    });
+  }
+
+  void logout() async {
+    FirebaseAuth.instance.signOut();
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    sp.clear().then((v) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => FrontPage()));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-
     print(role);
 
     return SafeArea(
@@ -79,33 +80,28 @@ class _MyDrawerState extends State<MyDrawer> {
                           fontSize: 20,
                         ),
                       ),
-                      // MaterialButton(
-                      //   shape: RoundedRectangleBorder(
-                      //     borderRadius: BorderRadius.circular(20),
-                      //   ),
-                      //   padding: EdgeInsets.all(12.5),
-                      //   onPressed: () {},
-                      //   color: Color(0xfffe924a),
-                      //   child: Center(
-                      //     child: Text(
-                      //       "Profile & Settings",
-                      //       style: TextStyle(
-                      //         color: Colors.white,
-                      //         fontWeight: FontWeight.w700,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // )
                     ],
                   ),
                   SizedBox(
                     height: role == "Patient" ? 28 : 24,
                   ),
                   Visibility(
-                    visible: role == "Patient" ? true : false,
+                    visible:
+                        role == "Patient" || role == "Doctor" ? true : false,
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => UserHomePage(full_name: widget.full_name,)));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => role == "Patient"
+                                    ? UserHomePage(
+                                        full_name: widget.full_name,
+                                      )
+                                    : role == "Doctor"
+                                        ? DoctorHomePage(
+                                            full_name: widget.full_name,
+                                          )
+                                        : Container()));
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -130,13 +126,18 @@ class _MyDrawerState extends State<MyDrawer> {
                     ),
                   ),
                   SizedBox(
-                    height: role == "Patient" ? 20 : 0,
+                    height: role == "Patient" || role == "Doctor" ? 20 : 0,
                   ),
                   Visibility(
                     visible: role == "Patient" ? true : false,
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => OrdersScreen(full_name: widget.full_name,)));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => OrdersScreen(
+                                      full_name: widget.full_name,
+                                    )));
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -166,6 +167,12 @@ class _MyDrawerState extends State<MyDrawer> {
                   InkWell(
                     onTap: () {
                       // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen(sid: sid)));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProfileScreen(
+                                    full_name: widget.full_name,
+                                  )));
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -189,13 +196,31 @@ class _MyDrawerState extends State<MyDrawer> {
                     ),
                   ),
                   SizedBox(
-                    height: role == "Patient" ? 20 : 0,
+                    height: role == "Patient"
+                        ? 20
+                        : role == "Doctor"
+                            ? 20
+                            : 0,
                   ),
                   Visibility(
-                    visible: role == "Patient" ? true : false,
+                    visible: role == "Patient"
+                        ? true
+                        : role == "Doctor"
+                            ? true
+                            : false,
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => PatientChats(fullName: widget.full_name,)));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => role == "Patient"
+                                    ? PatientChats(
+                                        fullName: widget.full_name,
+                                      )
+                                    : role == "Doctor"
+                                        ? ChatsScreen(
+                                            fullName: widget.full_name)
+                                        : Container()));
                       },
                       child: Row(
                         children: [
@@ -259,7 +284,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   //           context,
                   //           MaterialPageRoute(
                   //               builder: (context) => PharmacyForDoctors(
-                                      
+
                   //                   )));
                   //   },
                   //   child: Row(
@@ -291,7 +316,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   //           context,
                   //           MaterialPageRoute(
                   //               builder: (context) => EBookForDoctors(
-                                     
+
                   //                   )));
                   //   },
                   //   child: Row(
@@ -355,7 +380,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   //           context,
                   //           MaterialPageRoute(
                   //               builder: (context) => ChatForDoctors(
-                                      
+
                   //                   )));
                   //   },
                   //   child: Row(
@@ -419,7 +444,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   //           context,
                   //           MaterialPageRoute(
                   //               builder: (context) => SalesForDoctors(
-                                     
+
                   //                   )));
                   //   },
                   //   child: Row(
@@ -443,13 +468,18 @@ class _MyDrawerState extends State<MyDrawer> {
                   //   ),
                   // ),
                   SizedBox(
-                     height: role == "Patient" ? 20 : 0,
+                    height: role == "Patient" ? 20 : 0,
                   ),
                   Visibility(
                     visible: role == "Patient" ? true : false,
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => MedicineInventory(full_name: widget.full_name,)));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MedicineInventory(
+                                      full_name: widget.full_name,
+                                    )));
                       },
                       child: Row(
                         children: [
@@ -504,12 +534,10 @@ class _MyDrawerState extends State<MyDrawer> {
                   ),
                 ],
               ),
-          
             ],
           ),
         ),
       ),
     );
-
   }
 }

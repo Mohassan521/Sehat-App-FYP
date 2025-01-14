@@ -3,6 +3,7 @@ import 'package:lottie/lottie.dart';
 import 'package:sehat_app/screens/doctorScreens/doctorProfile.dart';
 import 'package:sehat_app/widgets/doctorCategories.dart';
 import 'package:sehat_app/widgets/doctorDrawer.dart';
+import 'package:sehat_app/widgets/drawer.dart';
 
 class DoctorHomePage extends StatefulWidget {
   final String? full_name;
@@ -13,12 +14,13 @@ class DoctorHomePage extends StatefulWidget {
 }
 
 class _DoctorHomePageState extends State<DoctorHomePage> {
-
   // https://asset-cdn.lottiefiles
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: DoctorDrawer(fullName: widget.full_name!,),
+      drawer: MyDrawer(
+        full_name: widget.full_name!,
+      ),
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
         backgroundColor: Colors.grey.shade200,
@@ -56,11 +58,11 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
                   ],
                 ),
               ),
-        
+
               SizedBox(
                 height: 20,
               ),
-        
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Container(
@@ -71,17 +73,17 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
                   child: Row(
                     children: [
                       // animation or image
-        
+
                       Container(
-                        height: 100,
-                        width: 100,
-                        child: LottieBuilder.network("https://lottie.host/4dfc91ff-dd16-4617-803f-85cb4e4f0c7f/ceb4eLE4ap.json")
-                      ),
-        
+                          height: 100,
+                          width: 100,
+                          child: LottieBuilder.network(
+                              "https://lottie.host/4dfc91ff-dd16-4617-803f-85cb4e4f0c7f/ceb4eLE4ap.json")),
+
                       SizedBox(
                         width: 20,
                       ),
-        
+
                       // text
                       Expanded(
                         child: Column(
@@ -120,13 +122,13 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
                   ),
                 ),
               ),
-        
+
               // search area
-        
+
               SizedBox(
                 height: 25,
               ),
-        
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Container(
@@ -142,23 +144,23 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
                   ),
                 ),
               ),
-        
+
               SizedBox(
                 height: 25,
               ),
-        
+
               // Container(
               //   height: MediaQuery.sizeOf(context).height * 0.08,
               //   child: ListView(
               //     scrollDirection: Axis.horizontal,
               //     children: [
-        
+
               //       DoctorCategories(),
               //       DoctorCategories(),
               //     ],
               //   ),
               // )
-        
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Row(
@@ -166,20 +168,22 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
                   children: [
                     Text(
                       "Your Appointments",
-                      style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       "See All",
-                      style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+                      style:
+                          TextStyle(fontSize: 16, color: Colors.grey.shade700),
                     )
                   ],
                 ),
               ),
-        
+
               SizedBox(
                 height: 25,
               ),
-        
+
               Container(
                 height: MediaQuery.sizeOf(context).height * 0.3,
                 child: ListView(
@@ -209,7 +213,10 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
                                   Icons.star,
                                   color: Colors.yellow.shade600,
                                 ),
-                                Text("4.9", style: TextStyle(fontWeight: FontWeight.bold),)
+                                Text(
+                                  "4.9",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                )
                               ],
                             ),
                             SizedBox(
@@ -256,7 +263,11 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
                                     Icons.star,
                                     color: Colors.yellow.shade600,
                                   ),
-                                  Text("4.9", style: TextStyle(fontWeight: FontWeight.bold),)
+                                  Text(
+                                    "4.9",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  )
                                 ],
                               ),
                               SizedBox(
