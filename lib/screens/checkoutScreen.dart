@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_shopping_cart/model/cart_model.dart';
@@ -28,6 +29,7 @@ class CheckOutScreen extends StatefulWidget {
 }
 
 class _CheckOutScreenState extends State<CheckOutScreen> {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   TextEditingController couponController = TextEditingController();
   String _selectedValue = "Cash On Delivery";
   String status = "Order Pending";
@@ -71,6 +73,41 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
       print("Order Added Successfully");
     }).catchError((error) {
       print("Failed to add order: $error");
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("Message received when app in foreground");
+      print("Title: ${message.notification?.title}");
+      print("Body: ${message.notification?.body}");
+
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        RemoteNotification? notification = message.notification;
+        AndroidNotification? android = message.notification?.android;
+
+        if (notification != null && android != null) {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(notification.title ?? ""),
+                  content: SingleChildScrollView(
+                    child: ListBody(
+                      children: [Text(notification.body ?? "")],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(onPressed: () {}, child: const Text("Ok"))
+                  ],
+                );
+              });
+        }
+      });
     });
   }
 
@@ -315,6 +352,8 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                             print(email);
                             // postCartDetailsToFirestore();
 
+                            // _firebaseMessaging.subscribeToTopic(email);
+
                             DatabaseService()
                                 .sendEmail(
                                     recepient: email,
@@ -333,6 +372,8 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                           message:
                                               "Order Placed. You will be contacted shortly. \n Email also sent for verification ")));
                             });
+
+                            setState(() {});
                             // PersistentShoppingCart().clearCart();
                           },
                           child: Text("Checkout"),

@@ -1,1 +1,38 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"sehat-app-fyp","appId":"1:646460085112:android:0387c0cef92ea6871aae8d","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"sehat-app-fyp","configurations":{"android":"1:646460085112:android:0387c0cef92ea6871aae8d","ios":"1:646460085112:ios:79052cfafaafb8921aae8d"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "sehat-app-fyp",
+          "appId": "1:646460085112:android:0387c0cef92ea6871aae8d",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "sehat-app-fyp",
+          "configurations": {
+            "android": "1:646460085112:android:0387c0cef92ea6871aae8d",
+            "ios": "1:646460085112:ios:79052cfafaafb8921aae8d"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:sehat_app/screens/adminScreens/addDoctor.dart';
 import 'package:sehat_app/screens/adminScreens/addMedicines.dart';
@@ -14,6 +15,23 @@ class AdminHomePage extends StatefulWidget {
 }
 
 class _AdminHomePageState extends State<AdminHomePage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("Received a message while in the foreground: ${message.messageId}");
+      // Handle the message here (show a notification, etc.)
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print("Message clicked!");
+    });
+
+    // Request permissions for iOS
+    FirebaseMessaging.instance.requestPermission();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

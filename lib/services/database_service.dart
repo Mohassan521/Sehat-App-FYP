@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:persistent_shopping_cart/model/cart_model.dart';
@@ -82,7 +83,6 @@ class DatabaseService {
 //     return _database!;
 //   }
 
-  
 //   void createCartTable(Database db) async {
 //     print("Creating Cart table...");
 //     await db.execute(
@@ -106,7 +106,6 @@ class DatabaseService {
 //   );
 // }
 
-
 //   Future<void> insertCartItem(Map<String, dynamic> cartItem) async {
 //   final db = await DatabaseService().database;
 
@@ -126,8 +125,6 @@ class DatabaseService {
 //   int id = await db.insert('Cart', cartItem);
 //   print("Item added with ID: $id");
 // }
-
-
 
 //   Future<List<Map<String, dynamic>>> fetchUserCartItems(String userId) async {
 //     final db = await DatabaseService().database; // Use DatabaseService
@@ -160,7 +157,7 @@ class DatabaseService {
 //     await db.delete('Cart', where: 'userId = ?', whereArgs: [userId]);
 //   }
 
-  Future sendEmail ({
+  Future sendEmail({
     required String recepient,
     required String name,
     required String email,
@@ -170,22 +167,22 @@ class DatabaseService {
     final url = Uri.parse("https://api.emailjs.com/api/v1.0/email/send");
 
     final response = await http.post(url,
-      headers: {
-        'Content-Type' : 'application/json'
-      }
-     ,body: json.encode({
-      "service_id" : "service_ledhy4e",
-      "template_id" : "template_t0ojqq4",
-      "user_id" : "ZWrFny1RQdaBixAeC",
-      "accessToken" : "hIIuVk7P-Fg9nAADXbQ_W",
-      "template_params": {
-        "to_email" : recepient,
-        "to_name": name, // This corresponds to {{to_name}} in your template
-        "user_email": email, // If you want to pass the user's email
-        "user_subject": subject, // This corresponds to {{user_subject}} in your template
-        "user_message": message, // This corresponds to {{user_message}} in your template
-      }
-    }) );
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          "service_id": "service_ledhy4e",
+          "template_id": "template_t0ojqq4",
+          "user_id": "ZWrFny1RQdaBixAeC",
+          "accessToken": "hIIuVk7P-Fg9nAADXbQ_W",
+          "template_params": {
+            "to_email": recepient,
+            "to_name": name, // This corresponds to {{to_name}} in your template
+            "user_email": email, // If you want to pass the user's email
+            "user_subject":
+                subject, // This corresponds to {{user_subject}} in your template
+            "user_message":
+                message, // This corresponds to {{user_message}} in your template
+          }
+        }));
 
     print(response.body);
   }
@@ -202,7 +199,7 @@ class DatabaseService {
               .doc(user.uid)
               .get();
 
-              // MNJNE49J45R4XYVHMQ9FV19S
+          // MNJNE49J45R4XYVHMQ9FV19S
 
           if (documentSnapshot.exists) {
             String role = documentSnapshot.get('role') ?? 'Unknown Role';
@@ -220,7 +217,16 @@ class DatabaseService {
             sp.setString("address", address ?? "");
             sp.setString("email", email);
 
+            String? fcmToken = await FirebaseMessaging.instance.getToken();
+
+            print("FCM token: $fcmToken");
+
             if (role == "Admin") {
+              await FirebaseFirestore.instance
+                  .collection('registeredUsers')
+                  .doc(user.uid)
+                  .set({'fcmToken': fcmToken}, SetOptions(merge: true));
+
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
