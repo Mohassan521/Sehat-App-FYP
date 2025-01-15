@@ -11,9 +11,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Utils().registerServices();
-  runApp(MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => StatusValueProvider())],
-      child: const MyApp()));
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => StatusValueProvider()),
+    ChangeNotifierProvider(
+      create: (_) => MedicineStockStatus(),
+    )
+  ], child: const MyApp()));
 }
 
 // final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;

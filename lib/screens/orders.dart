@@ -56,168 +56,181 @@ class _OrdersScreenState extends State<OrdersScreen> {
           style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16.5),
         ),
       ),
-      body: Column(
-        children: [
-          StreamBuilder(
-            stream: FirebaseFirestore.instance.collection("Orders").snapshots(),
-            builder: (context, snapshot) {
-              var docs = snapshot.data?.docs.where((doc) {
-                return doc['user_id'] == user_id;
-              }).toList();
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            StreamBuilder(
+              stream:
+                  FirebaseFirestore.instance.collection("Orders").snapshots(),
+              builder: (context, snapshot) {
+                var docs = snapshot.data?.docs.where((doc) {
+                  return doc['user_id'] == user_id;
+                }).toList();
 
-              if (docs == null || docs.isEmpty) {
-                return const Center(
-                  child: Text(
-                    "No Orders Found",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                docs?.sort((a, b) {
+                  DateTime aDate = (a["timestamp"] as Timestamp).toDate();
+                  DateTime bDate = (b["timestamp"] as Timestamp).toDate();
+                  return bDate.compareTo(aDate);
+                });
+
+                if (docs == null || docs.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "No Orders Found",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    ),
+                  );
+                }
+
+                return SizedBox(
+                  height: MediaQuery.sizeOf(context).height * 0.9,
+                  child: ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: docs.length,
+                    itemBuilder: (context, index) {
+                      var order = docs[index].data();
+                      var rawTimestamp = order['timestamp'];
+                      DateTime orderDate = (rawTimestamp as Timestamp).toDate();
+                      String formattedDate =
+                          "${orderDate.day.toString().padLeft(2, '0')} ${_getMonthName(orderDate.month)} ${orderDate.year}";
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0,
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 10),
+                              decoration: BoxDecoration(
+                                  color: Colors.grey.shade200,
+                                  border:
+                                      Border.all(color: Colors.grey.shade300),
+                                  borderRadius: BorderRadius.circular(12)),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(Icons.access_time),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                order["Status"],
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w800,
+                                                    color: Colors.blue,
+                                                    fontSize: 15.5),
+                                              ),
+                                              Text(
+                                                formattedDate,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16),
+                                              )
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      InkWell(
+                                        onTap: () {},
+                                        child: Icon(
+                                          Icons.arrow_forward_ios,
+                                          size: 14,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(Icons.receipt_long),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Order",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w800,
+                                                    color: Colors.grey,
+                                                    fontSize: 12),
+                                              ),
+                                              Text(
+                                                "CWT${order["order_id"]}",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14),
+                                              )
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Icon(Icons.calendar_month),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Shipping Date",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w800,
+                                                    color: Colors.grey,
+                                                    fontSize: 12),
+                                              ),
+                                              Text(
+                                                formattedDate,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14),
+                                              )
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 13,
+                          )
+                        ],
+                      );
+                    },
                   ),
                 );
-              }
-
-              return ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: docs.length,
-                itemBuilder: (context, index) {
-                  var order = docs[index].data();
-                  var rawTimestamp = order['timestamp'];
-                  DateTime orderDate = (rawTimestamp as Timestamp).toDate();
-                  String formattedDate =
-                      "${orderDate.day.toString().padLeft(2, '0')} ${_getMonthName(orderDate.month)} ${orderDate.year}";
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 15.0,
-                        ),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 10),
-                          decoration: BoxDecoration(
-                              color: Colors.grey.shade200,
-                              border: Border.all(color: Colors.grey.shade300),
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(Icons.access_time),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            order["Status"],
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w800,
-                                                color: Colors.blue,
-                                                fontSize: 15.5),
-                                          ),
-                                          Text(
-                                            formattedDate,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                          )
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      
-                                    },
-                                    child: Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 14,
-                                    ),
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(Icons.receipt_long),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Order",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w800,
-                                                color: Colors.grey,
-                                                fontSize: 12),
-                                          ),
-                                          Text(
-                                            "CWT${order["order_id"]}",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14),
-                                          )
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.calendar_month),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Shipping Date",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w800,
-                                                color: Colors.grey,
-                                                fontSize: 12),
-                                          ),
-                                          Text(
-                                            formattedDate,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14),
-                                          )
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 13,
-                      )
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-        ],
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

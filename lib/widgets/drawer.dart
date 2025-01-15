@@ -85,48 +85,44 @@ class _MyDrawerState extends State<MyDrawer> {
                   SizedBox(
                     height: role == "Patient" ? 28 : 24,
                   ),
-                  Visibility(
-                    visible:
-                        role == "Patient" || role == "Doctor" ? true : false,
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => role == "Patient"
-                                    ? UserHomePage(
-                                        full_name: widget.full_name,
-                                      )
-                                    : role == "Doctor"
-                                        ? DoctorHomePage(
-                                            full_name: widget.full_name,
-                                          )
-                                        : Container()));
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.home,
-                            color: Colors.black,
-                            size: 24,
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => role == "Patient"
+                                  ? UserHomePage(
+                                      full_name: widget.full_name,
+                                    )
+                                  : role == "Doctor"
+                                      ? DoctorHomePage(
+                                          full_name: widget.full_name,
+                                        )
+                                      : Container()));
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.home,
+                          color: Colors.black,
+                          size: 24,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "Home",
+                          style: TextStyle(
+                            fontSize: 17.5,
+                            fontWeight: FontWeight.bold,
                           ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            "Home",
-                            style: TextStyle(
-                              fontSize: 17.5,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        ],
-                      ),
+                        )
+                      ],
                     ),
                   ),
                   SizedBox(
-                    height: role == "Patient" || role == "Doctor" ? 20 : 0,
+                    height: 20,
                   ),
                   Visibility(
                     visible: role == "Patient" ? true : false,

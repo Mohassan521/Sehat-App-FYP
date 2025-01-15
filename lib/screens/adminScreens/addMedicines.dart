@@ -49,8 +49,11 @@ class _AddMedicinesState extends State<AddMedicines> {
     // var user = _auth.currentUser;
     CollectionReference ref =
         FirebaseFirestore.instance.collection('Medicines');
-    ref.doc(Random().nextInt(9000).toString()).set({
-      'user_id': Random().nextInt(9000),
+
+    String orderId = (100 + Random().nextInt(900)).toString();
+
+    ref.doc(orderId).set({
+      'user_id': orderId,
       "Medicine Name": medName,
       "Medicine Category": category,
       "Description": description,
@@ -64,8 +67,9 @@ class _AddMedicinesState extends State<AddMedicines> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                CompletedAnyTask(path: "'assets/images/done.json'",message: "Medicine Added Succesfully")));
+            builder: (context) => CompletedAnyTask(
+                path: "'assets/images/done.json'",
+                message: "Medicine Added Succesfully")));
   }
 
   @override
@@ -402,7 +406,15 @@ class _AddMedicinesState extends State<AddMedicines> {
               ),
               MaterialButton(
                 onPressed: () async {
-                  if (file != null && medName.text.isNotEmpty && medicine_category.isNotEmpty && strength.text.isNotEmpty && description.text.isNotEmpty && dosageForm.isNotEmpty && manufacturer.text.isNotEmpty && location.text.isNotEmpty && price.text.isNotEmpty) {
+                  if (file != null &&
+                      medName.text.isNotEmpty &&
+                      medicine_category.isNotEmpty &&
+                      strength.text.isNotEmpty &&
+                      description.text.isNotEmpty &&
+                      dosageForm.isNotEmpty &&
+                      manufacturer.text.isNotEmpty &&
+                      location.text.isNotEmpty &&
+                      price.text.isNotEmpty) {
                     downloadURL = await _storageService.uploadMedicineImages(
                       file: file!,
                     );
@@ -418,8 +430,8 @@ class _AddMedicinesState extends State<AddMedicines> {
                         isChecked == true ? "Yes" : "No",
                         downloadURL!);
                   } else {
-                    Utils().toastMessage(
-                        "Please enter data in all fields", Colors.red, Colors.white);
+                    Utils().toastMessage("Please enter data in all fields",
+                        Colors.red, Colors.white);
                   }
 
                   print(downloadURL);

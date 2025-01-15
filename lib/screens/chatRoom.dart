@@ -25,7 +25,6 @@ class ChatRoom extends StatefulWidget {
 }
 
 class _ChatRoomState extends State<ChatRoom> {
-
   ChatUser? currentUser, otherUser;
   // final TextEditingController _channelController = TextEditingController();
   String _channelController = "";
@@ -35,6 +34,38 @@ class _ChatRoomState extends State<ChatRoom> {
   late MediaService _mediaService;
   late StorageService _storageService;
 
+  bool isAvailable = false;
+
+  void checkAvailability() {
+    String fromTime =
+        widget.docData['appointment_timings']['from']; // e.g., '6:00'
+    String toTime = widget.docData['appointment_timings']['to']; // e.g., '8:00'
+
+    // Convert from and to time to DateTime objects
+    DateTime now = DateTime.now();
+    DateTime from = _parseTimeOfDay(fromTime);
+    DateTime to = _parseTimeOfDay(toTime);
+
+    if (now.isAfter(from) && now.isBefore(to)) {
+      setState(() {
+        isAvailable = true;
+      });
+    } else {
+      setState(() {
+        isAvailable = false;
+      });
+    }
+  }
+
+  DateTime _parseTimeOfDay(String timeString) {
+    final now = DateTime.now();
+    final timeParts = timeString.split(':');
+    final hour = int.parse(timeParts[0]);
+    final minute = int.parse(timeParts[1]);
+
+    return DateTime(now.year, now.month, now.day, hour, minute);
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -43,11 +74,12 @@ class _ChatRoomState extends State<ChatRoom> {
     _mediaService = _getIt.get<MediaService>();
     _storageService = _getIt.get<StorageService>();
     currentUser = ChatUser(
-        id: FirebaseAuth.instance.currentUser!.uid, firstName: widget.full_name);
+        id: FirebaseAuth.instance.currentUser!.uid,
+        firstName: widget.full_name);
     otherUser = ChatUser(
-        id: widget.docData['user_id'],
-        firstName: widget.docData['display_name'],
-        // profileImage: widget.chatUser?.pfpURL
+      id: widget.docData['user_id'],
+      firstName: widget.docData['display_name'],
+      // profileImage: widget.chatUser?.pfpURL
     );
   }
 
@@ -147,14 +179,21 @@ class _ChatRoomState extends State<ChatRoom> {
           automaticallyImplyLeading: false,
           backgroundColor: Colors.white,
           actions: [
-            IconButton(onPressed: (){
-              // print("Current user and other user ID: ${currentUser!.id} ${otherUser!.id}");
-              _channelController = currentUser!.id;
-              if(_channelController.isNotEmpty){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CallScreen(channelName: _channelController,)));
-              }
-
-            }, icon: Icon(Icons.call))
+            IconButton(
+                enableFeedback: false,
+                onPressed: () {
+                  // print("Current user and other user ID: ${currentUser!.id} ${otherUser!.id}");
+                  _channelController = currentUser!.id;
+                  if (_channelController.isNotEmpty) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CallScreen(
+                                  channelName: _channelController,
+                                )));
+                  }
+                },
+                icon: Icon(Icons.call))
           ],
           flexibleSpace: SafeArea(
             child: Container(
@@ -174,8 +213,10 @@ class _ChatRoomState extends State<ChatRoom> {
                     width: 2,
                   ),
                   CircleAvatar(
-                    backgroundImage:
-                        AssetImage(widget.docData["role"] == "Doctor" ? "assets/images/doctor1.jpg" : "assets/images/no-photo.jpg"),
+                    backgroundImage: AssetImage(
+                        widget.docData["role"] == "Doctor"
+                            ? "assets/images/doctor1.jpg"
+                            : "assets/images/no-photo.jpg"),
                     maxRadius: 20,
                   ),
                   SizedBox(
@@ -208,142 +249,148 @@ class _ChatRoomState extends State<ChatRoom> {
           ),
         ),
         body: StreamBuilder<DocumentSnapshot<Chat>>(
-  stream: _databaseService.getChatData(currentUser!.id, otherUser!.id),
-  builder: (context, snapshot) {
-    Chat? chat = snapshot.data?.data();
-    List<ChatMessage> messages = [];
+          stream: _databaseService.getChatData(currentUser!.id, otherUser!.id),
+          builder: (context, snapshot) {
+            Chat? chat = snapshot.data?.data();
+            List<ChatMessage> messages = [];
 
-    if (chat != null && chat.messages != null) {
-      messages = _generateChatMessageList(chat.messages!);
-    }
+            if (chat != null && chat.messages != null) {
+              messages = _generateChatMessageList(chat.messages!);
+            }
 
-    return DashChat(
-      messageOptions: MessageOptions(
-        showOtherUsersAvatar: true,
-        showTime: true,
-        onTapMedia: (media) async {
-          final mimeType = lookupMimeType(media.fileName); // Detect MIME type of the file
-          print("MIME Type: $mimeType");
+            return DashChat(
+              messageOptions: MessageOptions(
+                showOtherUsersAvatar: true,
+                showTime: true,
+                onTapMedia: (media) async {
+                  final mimeType = lookupMimeType(
+                      media.fileName); // Detect MIME type of the file
+                  print("MIME Type: $mimeType");
 
-          if (mimeType == 'application/pdf') {
-            print(media.url);
-            // Open PDF directly from URL
-                        Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DocumentViewer(url: media.url, document_name: "PDF",), // Pass URL to PDF viewer
+                  if (mimeType == 'application/pdf') {
+                    print(media.url);
+                    // Open PDF directly from URL
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DocumentViewer(
+                          url: media.url,
+                          document_name: "PDF",
+                        ), // Pass URL to PDF viewer
+                      ),
+                    );
+                    // } else if (mimeType != null && mimeType.startsWith('image/')) {
+                    //   // Open image directly from URL
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => ImageViewerScreen(url: media.url), // Pass URL to image viewer
+                    //     ),
+                    //   );
+                    // }
+                  } else if (mimeType != null &&
+                      (mimeType == 'application/msword' ||
+                          mimeType ==
+                              'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+                          mimeType == 'application/vnd.ms-excel' ||
+                          mimeType ==
+                              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
+                    // Open Word/Excel document externally
+                    DocumentViewer(
+                      url: media.url,
+                      document_name: "",
+                    ); // Open URL externally using OpenFilex
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content:
+                              Text("Cannot open this file type: $mimeType")),
+                    );
+                  }
+                },
               ),
+              inputOptions: InputOptions(
+                alwaysShowSend: true,
+                leading: [
+                  // Image button
+                  IconButton(
+                    onPressed: () async {
+                      File? file = await _mediaService.getImageFromGallery();
+                      if (file != null) {
+                        String chatID = _databaseService.generateChatId(
+                          uid1: currentUser!.id,
+                          uid2: otherUser!.id,
+                        );
+
+                        String? downloadURL = await _storageService
+                            .uploadChatFiles(file: file, chatID: chatID);
+
+                        if (downloadURL != null) {
+                          ChatMessage chatMessage = ChatMessage(
+                            user: currentUser!,
+                            medias: [
+                              ChatMedia(
+                                url: downloadURL,
+                                fileName: "", // File name can be added here
+                                type: MediaType.image,
+                              )
+                            ],
+                            createdAt: DateTime.now(),
+                          );
+
+                          sendMessage(chatMessage);
+                        }
+                      }
+                    },
+                    icon: Icon(
+                      Icons.image,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  // Attach file button
+                  IconButton(
+                    onPressed: () async {
+                      File? file = await _mediaService.getFileFromDevice();
+                      if (file != null) {
+                        String chatID = _databaseService.generateChatId(
+                          uid1: currentUser!.id,
+                          uid2: otherUser!.id,
+                        );
+
+                        String? downloadURL = await _storageService
+                            .uploadChatPdfFiles(file: file, chatID: chatID);
+
+                        if (downloadURL != null) {
+                          ChatMessage chatMessage = ChatMessage(
+                            user: currentUser!,
+                            medias: [
+                              ChatMedia(
+                                url: downloadURL,
+                                fileName: file.path
+                                    .split("/")
+                                    .last, // Use file name here
+                                type: MediaType.file,
+                              )
+                            ],
+                            createdAt: DateTime.now(),
+                          );
+
+                          sendMessage(chatMessage);
+                        }
+                      }
+                    },
+                    icon: Icon(
+                      Icons.attach_file,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+              currentUser: currentUser!,
+              onSend: sendMessage,
+              messages: messages,
             );
-          // } else if (mimeType != null && mimeType.startsWith('image/')) {
-          //   // Open image directly from URL
-          //   Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //       builder: (context) => ImageViewerScreen(url: media.url), // Pass URL to image viewer
-          //     ),
-          //   );
-          // } 
- 
-            
-          }
-          else if (mimeType != null && 
-            (mimeType == 'application/msword' || 
-             mimeType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
-             mimeType == 'application/vnd.ms-excel' || 
-             mimeType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
-            // Open Word/Excel document externally
-            DocumentViewer(url: media.url,document_name: "",); // Open URL externally using OpenFilex
-          }
-          else{
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Cannot open this file type: $mimeType")),
-            );
-          }
-        },
-      ),
-      inputOptions: InputOptions(
-        alwaysShowSend: true,
-        leading: [
-          // Image button
-          IconButton(
-            onPressed: () async {
-              File? file = await _mediaService.getImageFromGallery();
-              if (file != null) {
-                String chatID = _databaseService.generateChatId(
-                  uid1: currentUser!.id,
-                  uid2: otherUser!.id,
-                );
-
-                String? downloadURL = await _storageService.uploadChatFiles(
-                  file: file, 
-                  chatID: chatID
-                );
-
-                if (downloadURL != null) {
-                  ChatMessage chatMessage = ChatMessage(
-                    user: currentUser!,
-                    medias: [
-                      ChatMedia(
-                        url: downloadURL,
-                        fileName: "", // File name can be added here
-                        type: MediaType.image,
-                      )
-                    ],
-                    createdAt: DateTime.now(),
-                  );
-
-                  sendMessage(chatMessage);
-                }
-              }
-            },
-            icon: Icon(
-              Icons.image,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          // Attach file button
-          IconButton(
-            onPressed: () async {
-              File? file = await _mediaService.getFileFromDevice();
-              if (file != null) {
-                String chatID = _databaseService.generateChatId(
-                  uid1: currentUser!.id,
-                  uid2: otherUser!.id,
-                );
-
-                String? downloadURL = await _storageService.uploadChatPdfFiles(
-                  file: file, 
-                  chatID: chatID
-                );
-
-                if (downloadURL != null) {
-                  ChatMessage chatMessage = ChatMessage(
-                    user: currentUser!,
-                    medias: [
-                      ChatMedia(
-                        url: downloadURL,
-                        fileName: file.path.split("/").last, // Use file name here
-                        type: MediaType.file,
-                      )
-                    ],
-                    createdAt: DateTime.now(),
-                  );
-
-                  sendMessage(chatMessage);
-                }
-              }
-            },
-            icon: Icon(
-              Icons.attach_file,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-        ],
-      ),
-      currentUser: currentUser!,
-      onSend: sendMessage,
-      messages: messages,
-    );
-  },
-));}}
-
+          },
+        ));
+  }
+}

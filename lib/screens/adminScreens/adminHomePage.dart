@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:sehat_app/screens/adminScreens/addDoctor.dart';
 import 'package:sehat_app/screens/adminScreens/addMedicines.dart';
+import 'package:sehat_app/screens/adminScreens/displayMedicines.dart';
 import 'package:sehat_app/screens/adminScreens/displayOrders.dart';
 import 'package:sehat_app/widgets/adminCard.dart';
 import 'package:sehat_app/widgets/drawer.dart';
@@ -90,6 +91,25 @@ class _AdminHomePageState extends State<AdminHomePage> {
                             builder: (context) => DisplayOrders()));
                   },
                 ),
+              ],
+            ),
+            SizedBox(height: 20), // Space between rows
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                AdminOptionTiles(
+                  tileName: "Display Medicines",
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DisplayMedicines(
+                                  full_name: widget.full_name,
+                                )));
+                  },
+                ),
+                // SizedBox(width: 10), // Add space between the cards
+                Container()
               ],
             ),
           ],

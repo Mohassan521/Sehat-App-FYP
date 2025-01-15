@@ -116,7 +116,7 @@ class _MedicineInventoryState extends State<MedicineInventory> {
                   return MedicineCard(
                     data: data,
                     image: data["Image"] ?? "", // Image URL
-                    title: data["Medicine Name"] ?? "Unknown Medicine",
+                    title: data["Status"] ?? "Unknown Medicine",
                     description:
                         data["Description"] ?? "No description available",
                     prescription: data["Prescription Required"] ?? "No",

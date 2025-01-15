@@ -352,7 +352,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(height: 15),
                   buildInfoRow(Icons.email, "Email", order["email"]),
                   SizedBox(
-                    height: 20,
+                    height: 40,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),

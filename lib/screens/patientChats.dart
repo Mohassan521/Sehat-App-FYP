@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:sehat_app/screens/chatRoom.dart';
 import 'package:sehat_app/services/database_service.dart';
+import 'package:sehat_app/widgets/drawer.dart';
 
 class PatientChats extends StatefulWidget {
   final String fullName;
@@ -47,12 +48,12 @@ class _PatientChatsState extends State<PatientChats> {
   Widget build(BuildContext context) {
     print(FirebaseAuth.instance.currentUser?.uid);
     return Scaffold(
+      drawer: MyDrawer(full_name: widget.fullName),
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Colors.purple,
+        iconTheme: IconThemeData(color: Colors.black),
         title: Text(
           "Conversations",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.black),
         ),
       ),
       body: Column(
@@ -122,7 +123,6 @@ class _PatientChatsState extends State<PatientChats> {
                         var docName = docData['display_name'] ?? "Unknown";
                         var docId = docData['user_id'] ?? "Unknown";
 
-
                         // Ensure the messages exist and access the first message
                         if (chatData['messages'] != null &&
                             chatData['messages'].isNotEmpty) {
@@ -179,13 +179,16 @@ class _PatientChatsState extends State<PatientChats> {
                             },
                             leading: ClipRRect(
                               borderRadius: BorderRadius.circular(40),
-                              child: Image.asset("assets/images/doctor1.jpg",
+                              child: Image.asset(
+                                "assets/images/doctor1.jpg",
                                 width: MediaQuery.sizeOf(context).width * 0.15,
                               ),
                             ),
                             title: Text("$docName"),
                             subtitle: Text(messageContent),
-                            trailing: Text(_formatMessageDateTime(lastMessage['sentAt']),),
+                            trailing: Text(
+                              _formatMessageDateTime(lastMessage['sentAt']),
+                            ),
                           );
                         }
                         return Container();
