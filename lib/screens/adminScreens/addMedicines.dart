@@ -50,9 +50,9 @@ class _AddMedicinesState extends State<AddMedicines> {
     CollectionReference ref =
         FirebaseFirestore.instance.collection('Medicines');
 
-    String orderId = (100 + Random().nextInt(900)).toString();
+    int orderId = (100 + Random().nextInt(900));
 
-    ref.doc(orderId).set({
+    ref.doc(orderId.toString()).set({
       'user_id': orderId,
       "Medicine Name": medName,
       "Medicine Category": category,
@@ -62,7 +62,8 @@ class _AddMedicinesState extends State<AddMedicines> {
       "Pharmacy Name": location,
       "Price (per strip)": price,
       "Prescription Required": presRequired,
-      "Image": imagePath
+      "Image": imagePath,
+      'Status': "In Stock",
     });
     Navigator.push(
         context,

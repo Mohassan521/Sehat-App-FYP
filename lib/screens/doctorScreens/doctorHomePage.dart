@@ -43,7 +43,7 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
                         Text(
-                          "Random User",
+                          "Dr.${widget.full_name}",
                           style: TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),

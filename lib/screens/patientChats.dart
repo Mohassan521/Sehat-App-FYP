@@ -69,19 +69,32 @@ class _PatientChatsState extends State<PatientChats> {
                 }
 
                 var docs = snapshot.data!.docs;
+                print(
+                    "this is ID of logged in user: ${FirebaseAuth.instance.currentUser?.uid}");
 
                 // Filter chat documents where the doctor (current user) is a participant
                 List<DocumentSnapshot> filteredDocs = docs.where((doc) {
                   var participants = doc['participants'] as List<dynamic>;
+
                   return participants
                       .contains(FirebaseAuth.instance.currentUser?.uid);
                 }).toList();
 
                 filteredDocs.sort((a, b) {
-                  var aLastMessage = a['messages'].last;
-                  var bLastMessage = b['messages'].last;
+                  var aMessages = a['messages'] as List<dynamic>? ?? [];
+                  var bMessages = b['messages'] as List<dynamic>? ?? [];
+
+                  if (aMessages.isEmpty || bMessages.isEmpty) {
+                    // Push chats with no messages to the end
+                    return aMessages.isEmpty ? 1 : -1;
+                  }
+
+                  var aLastMessage = aMessages.last;
+                  var bLastMessage = bMessages.last;
+
                   var aSentAt = (aLastMessage['sentAt'] as Timestamp).toDate();
                   var bSentAt = (bLastMessage['sentAt'] as Timestamp).toDate();
+
                   return bSentAt.compareTo(aSentAt);
                 });
 

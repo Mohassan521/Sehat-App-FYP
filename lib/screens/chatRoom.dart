@@ -173,6 +173,7 @@ class _ChatRoomState extends State<ChatRoom> {
   @override
   Widget build(BuildContext context) {
     print("getting this full name: ${widget.full_name}");
+    print("current user id: ${currentUser!.id}");
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -183,7 +184,9 @@ class _ChatRoomState extends State<ChatRoom> {
                 enableFeedback: false,
                 onPressed: () {
                   // print("Current user and other user ID: ${currentUser!.id} ${otherUser!.id}");
-                  _channelController = currentUser!.id;
+                  _channelController = "test_channel";
+                  print("channel showing $_channelController");
+
                   if (_channelController.isNotEmpty) {
                     Navigator.push(
                         context,

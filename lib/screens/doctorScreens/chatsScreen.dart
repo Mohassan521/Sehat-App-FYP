@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:sehat_app/screens/chatRoom.dart';
 import 'package:sehat_app/services/database_service.dart';
+import 'package:sehat_app/widgets/drawer.dart';
 
 class ChatsScreen extends StatefulWidget {
   final String fullName;
@@ -25,10 +26,29 @@ class _ChatsScreenState extends State<ChatsScreen> {
     _databaseService = _getIt.get<DatabaseService>();
   }
 
+  String _formatMessageDateTime(Timestamp timestamp) {
+    DateTime messageDateTime = timestamp.toDate();
+    DateTime today = DateTime.now();
+
+    // Check if the message was sent today
+    bool isToday = messageDateTime.year == today.year &&
+        messageDateTime.month == today.month &&
+        messageDateTime.day == today.day;
+
+    if (isToday) {
+      // If message is sent today, show time
+      return DateFormat('hh:mm a').format(messageDateTime);
+    } else {
+      // If message was sent before today, show the date
+      return DateFormat('dd/MM/yyyy').format(messageDateTime);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     print(FirebaseAuth.instance.currentUser?.uid);
     return Scaffold(
+      drawer: MyDrawer(full_name: widget.fullName),
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: Colors.purple,
@@ -57,6 +77,21 @@ class _ChatsScreenState extends State<ChatsScreen> {
                   return participants
                       .contains(FirebaseAuth.instance.currentUser?.uid);
                 }).toList();
+
+                filteredDocs.sort((a, b) {
+                  var aMessage = a['messages'] as List<dynamic>;
+                  var bMessage = b['messages'] as List<dynamic>;
+
+                  if (aMessage.isEmpty || bMessage.isEmpty) {
+                    // Push chats with no messages to the end
+                    return aMessage.isEmpty ? 1 : -1;
+                  }
+
+                  var aSentAt = (aMessage.last['sentAt'] as Timestamp).toDate();
+                  var bSentAt = (bMessage.last['sentAt'] as Timestamp).toDate();
+
+                  return bSentAt.compareTo(aSentAt);
+                });
 
                 if (filteredDocs.isEmpty) {
                   return Center(child: Text("No chats found"));
@@ -87,8 +122,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
                       builder: (context,
                           AsyncSnapshot<DocumentSnapshot> patientSnapshot) {
                         if (!patientSnapshot.hasData) {
-                          return Center(child: Text("Loading patient details..."));
-                          
+                          return Center(
+                              child: Text("Loading patient details..."));
                         }
 
                         var patientData = patientSnapshot.data?.data()
@@ -114,7 +149,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                             String fullMessage =
                                 lastMessage['content'] ?? "No message content";
                             if (fullMessage.length > 30) {
-                              messageContent = fullMessage.substring(0, 30) +
+                              messageContent = fullMessage.substring(0, 19) +
                                   "..."; // Show the first 30 characters followed by "..."
                             } else {
                               messageContent =
@@ -161,10 +196,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                             title: Text("$patientName"),
                             subtitle: Text(messageContent),
                             trailing: Text(
-                              DateFormat('hh:mm a').format(
-                                (lastMessage['sentAt'] as Timestamp).toDate(),
-                              ),
-                            ),
+                                _formatMessageDateTime(lastMessage["sentAt"])),
                           );
                         }
                         return Container();

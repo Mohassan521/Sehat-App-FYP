@@ -57,8 +57,8 @@ class _MedicineInventoryState extends State<MedicineInventory> {
                           value: '',
                           child: Center(child: Text('show all medicines'))),
                       DropdownMenuItem<String>(
-                          value: 'Aga Khan Hospital',
-                          child: Center(child: Text('Aga Khan Hospital'))),
+                          value: 'Agha Khan Hospital',
+                          child: Center(child: Text('Agha Khan Hospital'))),
                       DropdownMenuItem<String>(
                           value: 'Liaquat National Hospital',
                           child:
@@ -66,6 +66,72 @@ class _MedicineInventoryState extends State<MedicineInventory> {
                       DropdownMenuItem<String>(
                           value: 'South City Hospital',
                           child: Center(child: Text('South City Hospital'))),
+                      DropdownMenuItem<String>(
+                          value: 'Darul Sehat Hospital',
+                          child: Center(child: Text('Darul Sehat Hospital'))),
+                      DropdownMenuItem<String>(
+                          value: 'CFH Pharmacy',
+                          child: Center(child: Text('CFH Pharmacy'))),
+                      DropdownMenuItem<String>(
+                          value: 'Dvago', child: Center(child: Text('Dvago'))),
+                      DropdownMenuItem<String>(
+                          value: 'Servaid',
+                          child: Center(child: Text('Servaid'))),
+                      DropdownMenuItem<String>(
+                          value: 'Time Medical Center',
+                          child: Center(child: Text('Time Medical Center'))),
+                      DropdownMenuItem<String>(
+                          value: 'RIMS Trauma Hospital',
+                          child: Center(child: Text('RIMS Trauma Hospital'))),
+                      DropdownMenuItem<String>(
+                          value: 'The Modern Hospital',
+                          child: Center(child: Text('The Modern Hospital'))),
+                      DropdownMenuItem<String>(
+                          value: 'Mehmood Memorial Hospital',
+                          child:
+                              Center(child: Text('Mehmood Memorial Hospital'))),
+                      DropdownMenuItem<String>(
+                          value: 'Dr.Ziauddin Hospital Pharmacy',
+                          child: Center(
+                              child: Text('Dr.Ziauddin Hospital Pharmacy'))),
+                      DropdownMenuItem<String>(
+                          value: 'PAF Hospital Pharmacy',
+                          child: Center(child: Text('PAF Hospital Pharmacy'))),
+                      DropdownMenuItem<String>(
+                          value: 'Patel Hospital Pharmacy',
+                          child:
+                              Center(child: Text('Patel Hospital Pharmacy'))),
+                      DropdownMenuItem<String>(
+                          value: 'National Medical Center',
+                          child:
+                              Center(child: Text('National Medical Center'))),
+                      DropdownMenuItem<String>(
+                          value: 'HOPES Pharmacy',
+                          child: Center(child: Text('HOPES Pharmacy'))),
+                      DropdownMenuItem<String>(
+                          value: 'Park Lane Hospital Pharmacy',
+                          child: Center(
+                              child: Text('Park Lane Hospital Pharmacy'))),
+                      DropdownMenuItem<String>(
+                          value: 'NIBD Pharmacy',
+                          child: Center(child: Text('NIBD Pharmacy'))),
+                      DropdownMenuItem<String>(
+                          value: 'Dr.Essa Pharmacy',
+                          child: Center(child: Text('Dr.Essa Pharmacy'))),
+                      DropdownMenuItem<String>(
+                          value: 'Abbasi Shaheed Pharmacy',
+                          child:
+                              Center(child: Text('Abbasi Shaheed Pharmacy'))),
+                      DropdownMenuItem<String>(
+                          value: 'Mumtaz Medicos',
+                          child: Center(child: Text('Mumtaz Medicos'))),
+                      DropdownMenuItem<String>(
+                          value: 'KKF Medical Store',
+                          child: Center(child: Text('KKF Medical Store'))),
+                      DropdownMenuItem<String>(
+                          value: 'Usman Medical & General Store',
+                          child: Center(
+                              child: Text('Usman Medical & General Store'))),
                     ],
                   ),
                 ),

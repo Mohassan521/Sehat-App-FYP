@@ -22,11 +22,14 @@ class _CallScreenState extends State<CallScreen> {
   }
 
   void initAgora(String channelName) async {
+    // f0d047423fdc47d8aef33adad735395e
     client = AgoraClient(
         agoraConnectionData: AgoraConnectionData(
             appId: "f0d047423fdc47d8aef33adad735395e",
             channelName: channelName,
-            username: "user"));
+            username: "user",
+            tempToken:
+                "007eJxTYLhpMDnoy1Fn5hfXzv4Nui2oc5o3UUxu91/DiZ+MfDVWOlkqMKQZpBiYmJsYGaelJJuYp1gkpqYZGyemJKaYG5saW5qmntzeld4QyMjgu/YwIyMDBIL4PAwlqcUl8ckZiXl5qTkMDACabCPC"));
     await client!.initialize();
     setState(() {});
   }
@@ -34,10 +37,18 @@ class _CallScreenState extends State<CallScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(child: Stack(
+      body: SafeArea(
+          child: Stack(
         children: [
-          AgoraVideoViewer(client: client!, layoutType: Layout.oneToOne,enableHostControls: true,),
-          AgoraVideoButtons(client: client!, addScreenSharing: false,)
+          AgoraVideoViewer(
+            client: client!,
+            layoutType: Layout.grid,
+            enableHostControls: true,
+          ),
+          AgoraVideoButtons(
+            client: client!,
+            addScreenSharing: false,
+          )
         ],
       )),
     );
