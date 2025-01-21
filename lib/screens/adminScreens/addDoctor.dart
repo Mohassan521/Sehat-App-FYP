@@ -96,7 +96,6 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
       String location,
       String dob,
       String fees) async {
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     var user = _auth.currentUser;
 
     String formattedStartTime =
@@ -123,13 +122,12 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
       'available_days': selectedDays
     });
 
-    
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                CompletedAnyTask(path: 'assets/images/done.json',message: "Doctor Added Succesfully")));
-
+            builder: (context) => CompletedAnyTask(
+                path: 'assets/images/done.json',
+                message: "Doctor Added Succesfully")));
   }
 
   void signUp(
@@ -147,7 +145,6 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
         .then((value) => {
               postDetailsToFirestore(email, role, displayName, speciality,
                   experience, location, dob, fees),
-              
             })
         .catchError((e) {
       print(e.toString());

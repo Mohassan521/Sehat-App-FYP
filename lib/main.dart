@@ -15,7 +15,8 @@ void main() async {
     ChangeNotifierProvider(create: (_) => StatusValueProvider()),
     ChangeNotifierProvider(
       create: (_) => MedicineStockStatus(),
-    )
+    ),
+    ChangeNotifierProvider(create: (_) => AppointmentDateProvider())
   ], child: const MyApp()));
 }
 

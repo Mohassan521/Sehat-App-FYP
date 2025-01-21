@@ -61,3 +61,14 @@ class StatusValueProvider extends ChangeNotifier {
     }
   }
 }
+
+class AppointmentDateProvider extends ChangeNotifier {
+  DateTime? _selectedDate;
+
+  DateTime? get selectedDate => _selectedDate;
+
+  void updateDate(DateTime newValue) {
+    _selectedDate = newValue;
+    notifyListeners();
+  }
+}

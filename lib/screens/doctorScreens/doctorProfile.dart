@@ -1,10 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:sehat_app/Provider/provider.dart';
 import 'package:sehat_app/screens/callScreen.dart';
 import 'package:sehat_app/screens/chatRoom.dart';
 import 'package:sehat_app/services/database_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DoctorProfileScreen extends StatefulWidget {
   final String full_name;
@@ -74,6 +79,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
   @override
   Widget build(BuildContext context) {
     print("Name of current user: ${FirebaseAuth.instance.currentUser?.email}");
+    DateTime? _selectedDate;
 
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -111,6 +117,180 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
       } else {
         return 'N/A'; // Return a fallback value if 'from' or 'to' is missing
       }
+    }
+
+    bool isDateAllowed(DateTime date) {
+      // Get the day of the week (e.g., Monday, Tuesday)
+      final dayName = DateFormat('EEEE')
+          .format(date); // Converts date to a string like "Monday"
+
+      // Check if this day is available in the doctor's schedule
+      return appointmentDaysMap[dayName] == true;
+    }
+
+    void selectAppointmentDate(BuildContext context) async {
+      DateTime? pickedDate = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime.now(),
+        lastDate: DateTime.now().add(
+            Duration(days: 30)), // Restrict selection to 30 days from today
+        selectableDayPredicate: isDateAllowed, // Pass the allowed dates
+      );
+
+      if (pickedDate != null) {
+        Provider.of<AppointmentDateProvider>(context, listen: false)
+            .updateDate(pickedDate);
+      }
+    }
+
+    void appointmentDialog(String docName, String patientName, String contact,
+        String fees, String timings, String docLocation) {
+      showModalBottomSheet(
+          context: context,
+          builder: (context) {
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Doctor Name: ",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w700),
+                      ),
+                      Text(docName,
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w700))
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Patient Name: ",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w700)),
+                      Text(patientName,
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w700))
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Patient Contact: ",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w700)),
+                      Text(contact,
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w700))
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Doctor Fees: ",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w700)),
+                      Text("Rs.$fees",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w700))
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Appointment Timings: ",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w700)),
+                      Text(timings.toString(),
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w700))
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Select Date: ",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w700)),
+                      InkWell(
+                        onTap: () {
+                          selectAppointmentDate(context);
+                        },
+                        child: Consumer<AppointmentDateProvider>(
+                          builder: (context, value, child) {
+                            return Text(
+                                value.selectedDate != null
+                                    ? "${value.selectedDate!.day}-${value.selectedDate!.month}-${value.selectedDate!.year}"
+                                    : "Choose Date",
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700));
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  MaterialButton(
+                    onPressed: () async {
+                      SharedPreferences sp =
+                          await SharedPreferences.getInstance();
+                      CollectionReference ref =
+                          FirebaseFirestore.instance.collection("Appointments");
+                      ref.doc(widget.docData["user_id"]).set({
+                        "Doctor Name": widget.docData["display_name"],
+                        "Patient Name": widget.full_name,
+                        "Patient Contact": sp.getString("contact"),
+                        "Doctor Fees": widget.docData["Fees"],
+                        "Appointment Timings":
+                            widget.docData['appointment_timings']["from"] +
+                                "-" +
+                                widget.docData['appointment_timings']["to"],
+                        "Speciality": widget.docData['Speciality'],
+                      }).then((val) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content:
+                                  Text('Appointment Created Successfully')),
+                        );
+                      });
+                    },
+                    child: const Text("Confirm Appointment"),
+                    minWidth: double.infinity,
+                    color: Colors.purple,
+                    textColor: Colors.white,
+                    padding: const EdgeInsets.all(10),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  )
+                ],
+              ),
+            );
+          });
     }
 
     return Scaffold(
@@ -221,8 +401,19 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                     // Book Appointment Button
                     Center(
                       child: MaterialButton(
-                        onPressed: () {
-                          // Handle book appointment action
+                        onPressed: () async {
+                          SharedPreferences sp =
+                              await SharedPreferences.getInstance();
+                          String contact = sp.getString("contact") ?? "";
+                          appointmentDialog(
+                              widget.docData['display_name'],
+                              widget.full_name,
+                              contact,
+                              widget.docData['Fees'],
+                              widget.docData['appointment_timings']["from"] +
+                                  "-" +
+                                  widget.docData['appointment_timings']["to"],
+                              widget.docData['Location']);
                         },
                         child: Text('Book Appointment'),
                         padding: EdgeInsets.all(17),
