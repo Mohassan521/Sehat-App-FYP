@@ -20,6 +20,7 @@ class MyDrawer extends StatefulWidget {
 
 class _MyDrawerState extends State<MyDrawer> {
   String role = "";
+  String id = "";
 
   @override
   void initState() {
@@ -31,6 +32,7 @@ class _MyDrawerState extends State<MyDrawer> {
   void preferences() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     setState(() {
+      id = sp.getString("id") ?? "";
       role = sp.getString("role") ?? "";
     });
   }
@@ -97,6 +99,7 @@ class _MyDrawerState extends State<MyDrawer> {
                                   : role == "Doctor"
                                       ? DoctorHomePage(
                                           full_name: widget.full_name,
+                                          uid: id,
                                         )
                                       : Container()));
                     },
@@ -119,6 +122,42 @@ class _MyDrawerState extends State<MyDrawer> {
                           ),
                         )
                       ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: role == "Doctor" ? 20 : 0,
+                  ),
+                  Visibility(
+                    visible: role == "Doctor" ? true : false,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => OrdersScreen(
+                                      full_name: widget.full_name,
+                                    )));
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.production_quantity_limits,
+                            color: Colors.black,
+                            size: 24,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            "Completed Appointments",
+                            style: TextStyle(
+                              fontSize: 17.5,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(

@@ -62,6 +62,36 @@ class StatusValueProvider extends ChangeNotifier {
   }
 }
 
+class AppointmentStatusValueProvider extends ChangeNotifier {
+  String _selectedValue = "Pending";
+
+  String get selectedValue => _selectedValue;
+
+  void updateValue(String newStatus) {
+    _selectedValue = newStatus;
+    notifyListeners();
+  }
+
+  Future<void> updateOrderStatus(String orderId, BuildContext context) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Appointments') // Replace with your collection name
+          .doc(orderId) // Use the document ID
+          .update({
+        'Appointment Status': _selectedValue, // Update the status field
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Status updated successfully!')),
+      );
+      Navigator.pop(context); // Go back to the previous screen
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update status: $e')),
+      );
+    }
+  }
+}
+
 class AppointmentDateProvider extends ChangeNotifier {
   DateTime? _selectedDate;
 

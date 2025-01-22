@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -256,28 +258,47 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                   ),
                   MaterialButton(
                     onPressed: () async {
-                      SharedPreferences sp =
-                          await SharedPreferences.getInstance();
-                      CollectionReference ref =
-                          FirebaseFirestore.instance.collection("Appointments");
-                      ref.doc(widget.docData["user_id"]).set({
-                        "Doctor Name": widget.docData["display_name"],
-                        "Patient Name": widget.full_name,
-                        "Patient Contact": sp.getString("contact"),
-                        "Doctor Fees": widget.docData["Fees"],
-                        "Appointment Timings":
-                            widget.docData['appointment_timings']["from"] +
-                                "-" +
-                                widget.docData['appointment_timings']["to"],
-                        "Speciality": widget.docData['Speciality'],
-                      }).then((val) {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content:
-                                  Text('Appointment Created Successfully')),
-                        );
-                      });
+                      if (Provider.of<AppointmentDateProvider>(context,
+                                  listen: false)
+                              .selectedDate !=
+                          null) {
+                        int apid = Random().nextInt(900);
+                        SharedPreferences sp =
+                            await SharedPreferences.getInstance();
+                        CollectionReference ref = FirebaseFirestore.instance
+                            .collection("Appointments");
+                        ref.doc(apid.toString()).set({
+                          "Appointment id": apid,
+                          "Doctor Name": widget.docData["display_name"],
+                          "Patient Name": widget.full_name,
+                          "Patient Contact": sp.getString("contact"),
+                          "Doctor Fees": widget.docData["Fees"],
+                          "Patient ID": sp.getString("id"),
+                          "Doctor ID": widget.docData["user_id"],
+                          "Appointment Timings":
+                              widget.docData['appointment_timings']["from"] +
+                                  "-" +
+                                  widget.docData['appointment_timings']["to"],
+                          "Appointment Date":
+                              "${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.day}-${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.month}-${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.year}",
+                          "Appointment Status": "Pending",
+                          "Speciality": widget.docData['Speciality'],
+                        }).then((val) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text('Appointment Created Successfully')),
+                          );
+                        });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            backgroundColor: Colors.red,
+                            content: Text(
+                              'You need to select appointment date',
+                              style: TextStyle(color: Colors.white),
+                            )));
+                      }
                     },
                     child: const Text("Confirm Appointment"),
                     minWidth: double.infinity,

@@ -248,7 +248,9 @@ class DatabaseService {
                 context,
                 MaterialPageRoute(
                     builder: (context) => DoctorHomePage(
-                        full_name: sp.getString("fullName") ?? '')),
+                          full_name: sp.getString("fullName") ?? '',
+                          uid: sp.getString("id")!,
+                        )),
               );
             } else {
               Utils()

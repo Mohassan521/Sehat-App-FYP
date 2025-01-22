@@ -6,17 +6,20 @@ import 'package:sehat_app/Provider/provider.dart';
 import 'package:sehat_app/Utils/Utils.dart';
 import 'package:sehat_app/firebase_options.dart';
 import 'package:sehat_app/screens/splashScreen.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Utils().registerServices();
+  // SharedPreferences sp = await SharedPreferences.getInstance();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => StatusValueProvider()),
     ChangeNotifierProvider(
       create: (_) => MedicineStockStatus(),
     ),
-    ChangeNotifierProvider(create: (_) => AppointmentDateProvider())
+    ChangeNotifierProvider(create: (_) => AppointmentDateProvider()),
+    ChangeNotifierProvider(create: (_) => AppointmentStatusValueProvider())
   ], child: const MyApp()));
 }
 

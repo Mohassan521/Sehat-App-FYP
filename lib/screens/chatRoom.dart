@@ -38,8 +38,9 @@ class _ChatRoomState extends State<ChatRoom> {
 
   void checkAvailability() {
     String fromTime =
-        widget.docData['appointment_timings']['from']; // e.g., '6:00'
-    String toTime = widget.docData['appointment_timings']['to']; // e.g., '8:00'
+        widget.docData['appointment_timings']['from'] ?? ""; // e.g., '6:00'
+    String toTime =
+        widget.docData['appointment_timings']['to'] ?? ""; // e.g., '8:00'
 
     // Convert from and to time to DateTime objects
     DateTime now = DateTime.now();
@@ -77,8 +78,9 @@ class _ChatRoomState extends State<ChatRoom> {
         id: FirebaseAuth.instance.currentUser!.uid,
         firstName: widget.full_name);
     otherUser = ChatUser(
-      id: widget.docData['user_id'],
-      firstName: widget.docData['display_name'],
+      id: widget.docData['user_id'] ?? widget.docData['Patient ID'],
+      firstName:
+          widget.docData['display_name'] ?? widget.docData['Patient Name'],
       // profileImage: widget.chatUser?.pfpURL
     );
   }

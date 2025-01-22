@@ -1,13 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sehat_app/screens/doctorScreens/doctorProfile.dart';
+import 'package:sehat_app/screens/doctorScreens/editAppointmentStatus.dart';
 import 'package:sehat_app/widgets/doctorCategories.dart';
 import 'package:sehat_app/widgets/doctorDrawer.dart';
 import 'package:sehat_app/widgets/drawer.dart';
 
 class DoctorHomePage extends StatefulWidget {
+  final String uid;
   final String? full_name;
-  const DoctorHomePage({super.key, this.full_name});
+  const DoctorHomePage({super.key, this.full_name, required this.uid});
 
   @override
   State<DoctorHomePage> createState() => _DoctorHomePageState();
@@ -17,6 +20,7 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
   // https://asset-cdn.lottiefiles
   @override
   Widget build(BuildContext context) {
+    print(widget.uid);
     return Scaffold(
       drawer: MyDrawer(
         full_name: widget.full_name!,
@@ -181,113 +185,235 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
               ),
 
               SizedBox(
-                height: 25,
+                height: 5,
               ),
 
-              Container(
-                height: MediaQuery.sizeOf(context).height * 0.3,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 25.0),
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                            color: Colors.deepPurple.shade100,
-                            borderRadius: BorderRadius.circular(12)),
-                        child: Column(
-                          children: [
-                            ClipRRect(
-                                borderRadius: BorderRadius.circular(50),
-                                child: Image.asset(
-                                  "assets/images/doctor1.jpg",
-                                  height: 100,
-                                )),
-                            SizedBox(
-                              height: 10,
+              SizedBox(
+                height: MediaQuery.sizeOf(context).height * 0.8,
+                child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  stream: FirebaseFirestore.instance
+                      .collection("Appointments")
+                      .where("Doctor ID",
+                          isEqualTo: widget.uid) // Query by doctor ID
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!snapshot.hasData ||
+                        snapshot.data == null ||
+                        snapshot.data!.docs.isEmpty) {
+                      return Center(
+                        child: Text(
+                          "No Appointments Yet",
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w700),
+                        ),
+                      );
+                    }
+
+                    // Retrieve the list of documents
+                    var appointments = snapshot.data!.docs;
+
+                    return ListView.builder(
+                      itemCount: appointments.length,
+                      itemBuilder: (context, index) {
+                        var data = appointments[index].data();
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 8.0),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            Row(
+                            child: Column(
                               children: [
-                                Icon(
-                                  Icons.star,
-                                  color: Colors.yellow.shade600,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(Icons.person),
+                                        SizedBox(width: 10),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Patient Name",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w800,
+                                                color: Colors.grey,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            Text(
+                                              "${data["Patient Name"]}",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                EditAppointmentStatus(
+                                              data: data,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Icon(
+                                        Icons.arrow_forward_ios,
+                                        size: 12,
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  "4.9",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                )
+                                SizedBox(height: 15),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(Icons.phone),
+                                        SizedBox(width: 10),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Patient Contact",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w800,
+                                                color: Colors.grey,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            Text(
+                                              "${data["Patient Contact"]}",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Icon(Icons.date_range),
+                                        SizedBox(width: 10),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Appointment Date",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w800,
+                                                color: Colors.grey,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            Text(
+                                              "${data["Appointment Date"]}",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 15),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(Icons.medical_services),
+                                        SizedBox(width: 10),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Appointment Status",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w800,
+                                                color: Colors.grey,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            Text(
+                                              "${data["Appointment Status"]}",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Icon(Icons.timer),
+                                        SizedBox(width: 10),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Appointment Timings",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w800,
+                                                color: Colors.grey,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            Text(
+                                              "${data["Appointment Timings"]}",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "Dr. Hassan",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text("Therapist, 7 y.e")
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 25.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          // Navigator.push(context, MaterialPageRoute(builder: (context) => DoctorProfileScreen()));
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                              color: Colors.deepPurple.shade100,
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Column(
-                            children: [
-                              ClipRRect(
-                                  borderRadius: BorderRadius.circular(50),
-                                  child: Image.asset(
-                                    "assets/images/doctor1.jpg",
-                                    height: 100,
-                                  )),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.star,
-                                    color: Colors.yellow.shade600,
-                                  ),
-                                  Text(
-                                    "4.9",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "Dr. Hannan",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text("General Physician, 4 y.e")
-                            ],
                           ),
-                        ),
-                      ),
-                    ),
-                  ],
+                        );
+                      },
+                    );
+                  },
                 ),
               )
             ],
