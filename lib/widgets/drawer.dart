@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sehat_app/screens/adminScreens/adminHomePage.dart';
 import 'package:sehat_app/screens/doctorScreens/chatsScreen.dart';
 import 'package:sehat_app/screens/doctorScreens/doctorHomePage.dart';
 import 'package:sehat_app/screens/frontPage.dart';
@@ -101,7 +102,8 @@ class _MyDrawerState extends State<MyDrawer> {
                                           full_name: widget.full_name,
                                           uid: id,
                                         )
-                                      : Container()));
+                                      : AdminHomePage(
+                                          full_name: widget.full_name)));
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,

@@ -13,6 +13,7 @@ import 'package:sehat_app/screens/adminScreens/adminHomePage.dart';
 import 'package:sehat_app/screens/doctorScreens/doctorHomePage.dart';
 import 'package:sehat_app/screens/frontPage.dart';
 import 'package:sehat_app/screens/userHomePage.dart';
+import 'package:sehat_app/services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:sqflite/sqflite.dart';
 // import 'package:path/path.dart';
@@ -220,10 +221,18 @@ class DatabaseService {
             print("FCM token: $fcmToken");
 
             if (role == "Admin") {
+              // String fcmToken = await NotificationService.init();
               await FirebaseFirestore.instance
                   .collection('registeredUsers')
                   .doc(user.uid)
                   .set({'fcmToken': fcmToken}, SetOptions(merge: true));
+
+              // FirebaseMessaging.instance.onTokenRefresh.listen((e) async {
+              //   await FirebaseFirestore.instance
+              //       .collection('registeredUsers')
+              //       .doc(user.uid)
+              //       .set({'fcmToken': fcmToken}, SetOptions(merge: true));
+              // });
 
               Navigator.pushReplacement(
                 context,

@@ -6,12 +6,16 @@ import 'package:sehat_app/Provider/provider.dart';
 import 'package:sehat_app/Utils/Utils.dart';
 import 'package:sehat_app/firebase_options.dart';
 import 'package:sehat_app/screens/splashScreen.dart';
+import 'package:sehat_app/services/notification_service.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Utils().registerServices();
+
+  // await NotificationService.init();
+  await NotificationService.localNotiInit();
   // SharedPreferences sp = await SharedPreferences.getInstance();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => StatusValueProvider()),

@@ -282,7 +282,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                           "Appointment Date":
                               "${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.day}-${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.month}-${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.year}",
                           "Appointment Status": "Pending",
-                          "Speciality": widget.docData['Speciality'],
+                          // "Speciality": widget.docData['Speciality'],
                         }).then((val) {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(

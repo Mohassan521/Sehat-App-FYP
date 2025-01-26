@@ -233,7 +233,8 @@ class _ChatRoomState extends State<ChatRoom> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          widget.docData['display_name'] ?? "",
+                          widget.docData['display_name'] ??
+                              widget.docData["Patient Name"],
                           style: const TextStyle(
                               fontSize: 13, fontWeight: FontWeight.w600),
                         ),

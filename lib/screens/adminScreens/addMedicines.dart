@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sehat_app/Utils/Utils.dart';
 import 'package:sehat_app/services/media_service.dart';
@@ -29,48 +30,73 @@ class _AddMedicinesState extends State<AddMedicines> {
   bool isChecked = false;
   String? downloadURL;
   File? file;
+  bool isLoading = false;
 
   final GetIt _getIt = GetIt.instance;
   late MediaService _mediaService;
   late StorageService _storageService;
   // final _auth = FirebaseAuth.instance;
 
-  postDetailsToFirestore(
-      String medName,
-      String category,
-      String strength,
-      String description,
-      String dosage,
-      String manufacturer,
-      String location,
-      int price,
-      String presRequired,
-      String imagePath) async {
-    // var user = _auth.currentUser;
-    CollectionReference ref =
-        FirebaseFirestore.instance.collection('Medicines');
-
-    int orderId = (100 + Random().nextInt(900));
-
-    ref.doc(orderId.toString()).set({
-      'user_id': orderId,
-      "Medicine Name": medName,
-      "Medicine Category": category,
-      "Description": description,
-      "Dosage Form": dosage,
-      "Manufacturer": manufacturer,
-      "Pharmacy Name": location,
-      "Price (per strip)": price,
-      "Prescription Required": presRequired,
-      "Image": imagePath,
-      'Status': "In Stock",
+  Future<void> postDetailsToFirestore(
+    String medName,
+    String category,
+    String strength,
+    String description,
+    String dosage,
+    String manufacturer,
+    String location,
+    int price,
+    String presRequired,
+    String imagePath,
+  ) async {
+    setState(() {
+      isLoading = true; // Show loader
     });
-    Navigator.push(
+
+    FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+    try {
+      CollectionReference ref = _firestore.collection('Medicines');
+      int orderId = (100 + Random().nextInt(900));
+
+      await ref.doc(orderId.toString()).set({
+        'user_id': orderId,
+        "Medicine Name": medName,
+        "Medicine Category": category,
+        "Description": description,
+        "Dosage Form": dosage,
+        "Manufacturer": manufacturer,
+        "Pharmacy Name": location,
+        "Price (per strip)": price,
+        "Prescription Required": presRequired,
+        "Image": imagePath,
+        'Status': "In Stock",
+      });
+
+      // Navigate to success screen after completion
+      Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => CompletedAnyTask(
-                path: "'assets/images/done.json'",
-                message: "Medicine Added Succesfully")));
+          builder: (context) => CompletedAnyTask(
+            role: "Admin",
+            path: "assets/images/done.json",
+            message: "Medicine Added Successfully",
+          ),
+        ),
+      );
+    } catch (e) {
+      // Handle any errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Failed to add medicine: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        isLoading = false; // Hide loader
+      });
+    }
   }
 
   @override
@@ -392,6 +418,7 @@ class _AddMedicinesState extends State<AddMedicines> {
                   MaterialButton(
                     onPressed: () async {
                       file = await _mediaService.getImageFromGallery();
+                      setState(() {});
                     },
                     child: Text("Browse"),
                     color: Colors.purple,
@@ -406,43 +433,86 @@ class _AddMedicinesState extends State<AddMedicines> {
                 height: 10,
               ),
               MaterialButton(
-                onPressed: () async {
-                  if (file != null &&
-                      medName.text.isNotEmpty &&
-                      medicine_category.isNotEmpty &&
-                      strength.text.isNotEmpty &&
-                      description.text.isNotEmpty &&
-                      dosageForm.isNotEmpty &&
-                      manufacturer.text.isNotEmpty &&
-                      location.text.isNotEmpty &&
-                      price.text.isNotEmpty) {
-                    downloadURL = await _storageService.uploadMedicineImages(
-                      file: file!,
-                    );
-                    postDetailsToFirestore(
-                        medName.text,
-                        medicine_category,
-                        strength.text,
-                        description.text,
-                        dosageForm,
-                        manufacturer.text,
-                        location.text,
-                        int.parse(price.text),
-                        isChecked == true ? "Yes" : "No",
-                        downloadURL!);
-                  } else {
-                    Utils().toastMessage("Please enter data in all fields",
-                        Colors.red, Colors.white);
-                  }
+                onPressed: isLoading
+                    ? null // Disable the button while loading
+                    : () async {
+                        if (file != null &&
+                            medName.text.isNotEmpty &&
+                            medicine_category.isNotEmpty &&
+                            strength.text.isNotEmpty &&
+                            description.text.isNotEmpty &&
+                            dosageForm.isNotEmpty &&
+                            manufacturer.text.isNotEmpty &&
+                            location.text.isNotEmpty &&
+                            price.text.isNotEmpty) {
+                          setState(() {
+                            isLoading = true; // Start loading
+                          });
 
-                  print(downloadURL);
-                },
-                child: Text("Submit"),
+                          try {
+                            // Upload the image
+                            downloadURL =
+                                await _storageService.uploadMedicineImages(
+                              file: file!,
+                            );
+
+                            // Add details to Firestore
+                            await postDetailsToFirestore(
+                              medName.text,
+                              medicine_category,
+                              strength.text,
+                              description.text,
+                              dosageForm,
+                              manufacturer.text,
+                              location.text,
+                              int.parse(price.text),
+                              isChecked == true ? "Yes" : "No",
+                              downloadURL!,
+                            );
+
+                            // Optional: Show success message
+                            Utils().toastMessage(
+                              "Medicine added successfully",
+                              Colors.green,
+                              Colors.white,
+                            );
+                          } catch (e) {
+                            // Handle errors
+                            Utils().toastMessage(
+                              "An error occurred: $e",
+                              Colors.red,
+                              Colors.white,
+                            );
+                          } finally {
+                            setState(() {
+                              isLoading = false; // Stop loading
+                            });
+                          }
+                        } else {
+                          Utils().toastMessage(
+                            "Please enter data in all fields",
+                            Colors.red,
+                            Colors.white,
+                          );
+                        }
+                        print(downloadURL);
+                      },
+                child: isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.purple,
+                          strokeWidth: 2.5,
+                        ),
+                      )
+                    : const Text("Submit"),
                 color: Colors.purple,
                 textColor: Colors.white,
                 minWidth: double.infinity,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               )
             ],
           ),

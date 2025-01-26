@@ -153,12 +153,17 @@ class _DisplayOrdersState extends State<DisplayOrders> {
                                                             order["Status"],
                                                       )));
                                         },
-                                        child: Text(
-                                          "Edit Order Status",
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.blue,
-                                          ),
+                                        // child: Text(
+                                        //   "Edit",
+                                        //   style: TextStyle(
+                                        //     fontSize: 12,
+                                        //     color: Colors.blue,
+                                        //   ),
+                                        // ),
+                                        child: Icon(
+                                          Icons.arrow_forward_ios,
+                                          size: 12,
+                                          color: Colors.blue,
                                         ),
                                       )
                                     ],

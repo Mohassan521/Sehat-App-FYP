@@ -3,7 +3,7 @@ const admin = require("firebase-admin");
 
 admin.initializeApp();
 
-exports.sendOrderNotificationUpdated = onDocumentCreated("Orders/{orderId}",
+exports.sendOrderNotificationTwo = onDocumentCreated("Orders/{orderId}",
     async (event)=> {
       try {
         const snapshot = event.data;
@@ -15,6 +15,8 @@ exports.sendOrderNotificationUpdated = onDocumentCreated("Orders/{orderId}",
         const newValue = snapshot.data();
         const customerName = newValue.username;
         const orderId = event.params.orderId;
+
+        console.log("Triggered for order:", event.params.orderId);
 
         const payload = {
           notification: {
@@ -39,7 +41,7 @@ exports.sendOrderNotificationUpdated = onDocumentCreated("Orders/{orderId}",
             .filter((token) => token); // Removes undefined tokens
 
         if (tokens.length > 0) {
-          const response = await admin.messaging().sendEachForMulticast({
+          const response = await admin.messaging().send({
             tokens: tokens,
             notification: payload.notification,
           });

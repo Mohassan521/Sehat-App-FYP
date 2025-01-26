@@ -19,50 +19,47 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController passworController = TextEditingController();
   TextEditingController addressController = TextEditingController();
-  
 
   bool passwordVisibility = false;
   var role = "Patient";
 
   final _auth = FirebaseAuth.instance;
 
-  
-
   @override
   Widget build(BuildContext context) {
+    postDetailsToFirestore(String email, String role, String display_name,
+        String contact, String address) async {
+      FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+      var user = _auth.currentUser;
+      CollectionReference ref =
+          FirebaseFirestore.instance.collection('registeredUsers');
+      ref.doc(user!.uid).set({
+        'user_id': user.uid,
+        'email': _emailController.text,
+        'role': role,
+        'display_name': display_name,
+        'contact': contact,
+        'parmanent_address': address
+      });
+      Utils().toastMessage(
+          "User Registered Successfully", Colors.green, Colors.white);
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => FrontPage()));
+    }
 
-    postDetailsToFirestore(String email, String role, String display_name, String contact, String address) async {
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    var user = _auth.currentUser;
-    CollectionReference ref =
-        FirebaseFirestore.instance.collection('registeredUsers');
-    ref.doc(user!.uid).set({
-      'user_id' : user.uid,
-      'email': _emailController.text,
-      'role': role,
-      'display_name': display_name,
-      'contact' : contact,
-      'parmanent_address' : address
-    });
-    Utils().toastMessage("User Registered Successfully", Colors.green, Colors.white);
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => FrontPage()));
-    
-  }
-   
-    void signUp(String email, String password, String role, String displayName, String contact, String address) async {
-    CircularProgressIndicator();
-    await _auth
-        .createUserWithEmailAndPassword(email: email, password: password)
-        .then((value) => {
-          postDetailsToFirestore(email, role, displayName, contact, address),
-          
-        }
-        )
-        .catchError((e) {
-      print(e.toString());
-    });
-  }
+    void signUp(String email, String password, String role, String displayName,
+        String contact, String address) async {
+      CircularProgressIndicator();
+      await _auth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) => {
+                postDetailsToFirestore(
+                    email, role, displayName, contact, address),
+              })
+          .catchError((e) {
+        print(e.toString());
+      });
+    }
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -131,7 +128,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 // SizedBox(
                 //   height: 15,
                 // ),
-        
+
                 // ElevatedButton(
                 //   onPressed: () {},
                 //   style: ElevatedButton.styleFrom(
@@ -146,21 +143,29 @@ class _RegisterPageState extends State<RegisterPage> {
               height: 28,
             ),
             MaterialButton(
-              
               onPressed: () {
                 // registerUser();
-                signUp(_emailController.text, passworController.text, role, fullName.text, _mobileController.text, addressController.text);
+                signUp(
+                    _emailController.text,
+                    passworController.text,
+                    role,
+                    fullName.text,
+                    _mobileController.text,
+                    addressController.text);
               },
-              child: Text("Register",style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 18,
-              ),),
+              child: Text(
+                "Register",
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 18,
+                ),
+              ),
               minWidth: double.infinity,
-            padding: EdgeInsets.symmetric(vertical: 11),
-            textColor: Colors.white,
-            color: Colors.deepPurple.shade300,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              padding: EdgeInsets.symmetric(vertical: 11),
+              textColor: Colors.white,
+              color: Colors.deepPurple.shade300,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
             ),
           ],
         ),

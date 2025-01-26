@@ -20,17 +20,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print("Received a message while in the foreground: ${message.messageId}");
-      // Handle the message here (show a notification, etc.)
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print("Message clicked!");
-    });
-
-    // Request permissions for iOS
-    FirebaseMessaging.instance.requestPermission();
   }
 
   @override
