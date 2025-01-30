@@ -29,252 +29,290 @@ class _MedicineDetailsState extends State<MedicineDetails> {
     final DatabaseService _databaseService = DatabaseService();
 
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: Colors.white,
+        elevation: 0,
+        title: Text(
+          "Medicine Details",
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Medicine Image
             Hero(
-                tag: widget.medDetails["Image"],
-                child: Image.network(widget.medDetails["Image"])),
-            SizedBox(
-              height: 10,
+              tag: widget.medDetails["Image"],
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: const BorderRadius.vertical(
+                    bottom: Radius.circular(30),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    bottom: Radius.circular(30),
+                  ),
+                  child: Image.network(
+                    widget.medDetails["Image"],
+                    height: 250,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
             ),
+            const SizedBox(height: 20),
+
+            // Medicine Details
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Name: ",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w700),
-                      ),
-                      Text(widget.medDetails["Medicine Name"],
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w700)),
-                    ],
+                  Text(
+                    widget.medDetails["Medicine Name"],
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
                   ),
-                  SizedBox(
-                    height: 10,
+                  const SizedBox(height: 8),
+                  Text(
+                    widget.medDetails["Manufacturer"],
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey,
+                    ),
                   ),
+                  const SizedBox(height: 20),
+
+                  // Description
+                  const Text(
+                    "Description",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    widget.medDetails["Description"],
+                    style: const TextStyle(
+                      fontSize: 14,
+                      height: 1.6,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Key Details in Cards
+                  _buildDetailCard(
+                    title: "Dosage Form",
+                    value: widget.medDetails["Dosage Form"],
+                    icon: Icons.medication_outlined,
+                  ),
+                  _buildDetailCard(
+                    title: "Category",
+                    value: widget.medDetails["Medicine Category"],
+                    icon: Icons.category_outlined,
+                  ),
+                  _buildDetailCard(
+                    title: "Prescription Required",
+                    value: widget.medDetails["Prescription Required"],
+                    icon: Icons.assignment_turned_in_outlined,
+                  ),
+                  _buildDetailCard(
+                    title: "Price",
+                    value: "Rs. ${widget.medDetails["Price (per strip)"]}",
+                    icon: Icons.price_change_outlined,
+                  ),
+
+                  // Quantity Selector
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        "Manufacturer: ",
+                        "Quantity",
                         style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w700),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
                       ),
-                      ConstrainedBox(
-                          constraints: BoxConstraints(
-                              maxWidth:
-                                  MediaQuery.sizeOf(context).width * 0.45),
-                          child: Text(widget.medDetails["Manufacturer"],
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w700))),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Dosage Form: ",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w700),
-                      ),
-                      Text(widget.medDetails["Dosage Form"],
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w700)),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Description: ",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w700),
-                      ),
-                      ConstrainedBox(
-                          constraints: BoxConstraints(
-                              maxWidth:
-                                  MediaQuery.sizeOf(context).width * 0.65),
-                          child: Text(widget.medDetails["Description"],
-                              textAlign: TextAlign.end,
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w700))),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Category: ",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w700),
-                      ),
-                      Text(widget.medDetails["Medicine Category"],
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w700)),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Available in: ",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w700),
-                      ),
-                      ConstrainedBox(
-                          constraints: BoxConstraints(
-                              maxWidth:
-                                  MediaQuery.sizeOf(context).width * 0.65),
-                          child: Text(widget.medDetails["Pharmacy Name"],
-                              textDirection: TextDirection.rtl,
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w700))),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Prescription Required: ",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w700),
-                      ),
-                      Text(widget.medDetails["Prescription Required"],
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w700)),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Price: ",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w700),
-                      ),
-                      Text(
-                          "Rs.${widget.medDetails["Price (per strip)"].toString()}",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w700)),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Quantity: ",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w700),
-                      ),
-                      InputQty(
-                        maxVal: 100,
-                        initVal: qty,
-                        minVal: 1,
-                        steps: 1,
-                        onQtyChanged: (val) {
-                          setState(() {
-                            qty = val;
-                            print("updated qty value: $qty");
-                          });
-                        },
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: qty > 1
+                                ? () {
+                                    setState(() {
+                                      qty--;
+                                    });
+                                  }
+                                : null,
+                            icon: Icon(Icons.remove_circle_outline),
+                            color: Colors.grey,
+                          ),
+                          Text(
+                            qty.toString(),
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                qty++;
+                              });
+                            },
+                            icon: Icon(Icons.add_circle_outline),
+                            color: Colors.orange,
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  MaterialButton(
-                    onPressed: () async {
-                      print("quantity value: $qty");
-                      SharedPreferences sp =
-                          await SharedPreferences.getInstance();
-                      String userId = sp.getString("id") ?? "";
+                  const SizedBox(height: 20),
 
-                      final cartItem = PersistentShoppingCartItem(
-                        productId: DateTime.now()
-                            .millisecondsSinceEpoch
-                            .toString(), // Use a unique identifier for the product
-                        productName: widget.medDetails["Medicine Name"],
-                        unitPrice: (widget.medDetails["Price (per strip)"]).toDouble(),
-                        quantity: qty.toInt(),
-                        productImages: [widget.medDetails["Image"]],
-                        productDetails: {
-                          "user-id": userId,
-                        },
-                      );
+                  // Add to Cart Button
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        print("quantity value: $qty");
+                        SharedPreferences sp =
+                            await SharedPreferences.getInstance();
+                        String userId = sp.getString("id") ?? "";
 
-                      Map<String, dynamic> cartData =
-                          PersistentShoppingCart().getCartData();
-                      List<PersistentShoppingCartItem> cartItems =
-                          cartData['cartItems'] ?? [];
+                        final cartItem = PersistentShoppingCartItem(
+                          productId: DateTime.now()
+                              .millisecondsSinceEpoch
+                              .toString(), // Use a unique identifier for the product
+                          productName: widget.medDetails["Medicine Name"],
+                          unitPrice: (widget.medDetails["Price (per strip)"])
+                              .toDouble(),
+                          quantity: qty.toInt(),
+                          productImages: [widget.medDetails["Image"]],
+                          productDetails: {
+                            "user-id": userId,
+                          },
+                        );
 
-                      // Check if the product is already in the cart for this user
-                      bool alreadyInCart = cartItems.any((item) =>
-                          item.productImages?.first ==
-                              cartItem
-                                  .productImages?.first && // Compare with the new item's productId
-                          item.productDetails?['user-id'] == userId);
+                        Map<String, dynamic> cartData =
+                            PersistentShoppingCart().getCartData();
+                        List<PersistentShoppingCartItem> cartItems =
+                            cartData['cartItems'] ?? [];
 
-                      if (alreadyInCart) {
-                        // Show a toast if the product is already in the cart
-                        Utils().toastMessage(
-                            "This product is already in the cart",
-                            Colors.red,
-                            Colors.white);
-                      } else {
-                        // Add the item to the cart if not already present
-                        await PersistentShoppingCart().addToCart(cartItem);
-                        Utils().toastMessage("Medicine Added to Cart",
-                            Colors.orange, Colors.white);
-                      }
-                    },
-                    child: Center(child: Text("Add To Cart")),
-                    padding: EdgeInsets.all(15),
-                    color: Colors.orange,
-                    textColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                        // Check if the product is already in the cart for this user
+                        bool alreadyInCart = cartItems.any((item) =>
+                            item.productImages?.first ==
+                                cartItem.productImages
+                                    ?.first && // Compare with the new item's productId
+                            item.productDetails?['user-id'] == userId);
+
+                        if (alreadyInCart) {
+                          // Show a toast if the product is already in the cart
+                          Utils().toastMessage(
+                              "This product is already in the cart",
+                              Colors.red,
+                              Colors.white);
+                        } else {
+                          // Add the item to the cart if not already present
+                          await PersistentShoppingCart().addToCart(cartItem);
+                          Utils().toastMessage("Medicine Added to Cart",
+                              Colors.orange, Colors.white);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 40),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 5,
+                      ),
+                      child: const Text(
+                        "Add to Cart",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 30,
                   ),
                 ],
               ),
-            )
+            ),
+            const SizedBox(height: 30),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildDetailCard(
+      {required String title, required String value, required IconData icon}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.orange, size: 28),
+          const SizedBox(width: 15),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black54,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

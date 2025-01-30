@@ -254,7 +254,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         drawer: MyDrawer(full_name: widget.full_name),
-        appBar: AppBar(),
+        appBar: AppBar(
+          iconTheme: const IconThemeData(color: Colors.white),
+          backgroundColor: Colors.purple,
+        ),
         body: StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection("registeredUsers")
@@ -278,6 +281,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  SizedBox(height: 28),
                   Center(
                     child: CircleAvatar(
                       maxRadius: 60,
@@ -352,7 +356,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(height: 15),
                   buildInfoRow(Icons.email, "Email", order["email"]),
                   SizedBox(
-                    height: 40,
+                    height: 60,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -368,10 +372,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 context, data, sp.getString("id")!);
                       },
                       child: Text("Edit Details"),
-                      color: Colors.blue,
+                      color: Colors.purple,
                       textColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
+                          horizontal: 20, vertical: 15),
                       minWidth: double.infinity,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),

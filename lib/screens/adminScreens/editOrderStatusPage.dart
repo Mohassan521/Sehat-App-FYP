@@ -143,6 +143,7 @@ class _EditOrderStatusState extends State<EditOrderStatus> {
                     "Update Order Status",
                     style: TextStyle(
                       fontSize: 16,
+                      color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

@@ -57,7 +57,7 @@ class MedicineCard extends StatelessWidget {
                         padding: EdgeInsets.symmetric(
                             vertical: 4.0, horizontal: 40.0),
                         decoration: BoxDecoration(
-                          color: Colors.orange,
+                          color: Colors.purple,
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(12.0),
                               bottomLeft: Radius.circular(12.0)),
@@ -110,7 +110,7 @@ class MedicineCard extends StatelessWidget {
                             'More Details   >  ',
                             style: TextStyle(
                               fontSize: 16.0,
-                              color: Colors.orange,
+                              color: Colors.purple,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

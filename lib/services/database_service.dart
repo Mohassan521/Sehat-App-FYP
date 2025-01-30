@@ -190,99 +190,97 @@ class DatabaseService {
 
   void route(BuildContext context) async {
     try {
-      var auth = FirebaseAuth.instance;
+      final auth = FirebaseAuth.instance;
+      final firestore = FirebaseFirestore.instance;
 
       auth.authStateChanges().listen((User? user) async {
-        if (user != null) {
-          // User is logged in, proceed to check their role and navigate accordingly
-          DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+        if (user == null) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => FrontPage()));
+          return;
+        }
+
+        // Get user document
+        final doc =
+            await firestore.collection('registeredUsers').doc(user.uid).get();
+        if (!doc.exists) {
+          Utils()
+              .toastMessage('No user data found', Colors.orange, Colors.white);
+          return;
+        }
+
+        // Handle FCM tokens
+        final messaging = FirebaseMessaging.instance;
+
+        // 1. Always get current token on login
+        String? currentToken = await messaging.getToken();
+        print('Initial FCM Token: $currentToken');
+
+        // 2. Setup token refresh listener
+        messaging.onTokenRefresh.listen((newToken) async {
+          print('Token refreshed: $newToken');
+          await firestore
               .collection('registeredUsers')
               .doc(user.uid)
-              .get();
+              .update({'fcmToken': newToken});
+        });
 
-          // MNJNE49J45R4XYVHMQ9FV19S
+        // 3. Update Firestore with latest token
+        if (currentToken != null) {
+          await firestore
+              .collection('registeredUsers')
+              .doc(user.uid)
+              .update({'fcmToken': currentToken});
+        }
 
-          if (documentSnapshot.exists) {
-            String role = documentSnapshot.get('role') ?? 'Unknown Role';
-            String fullName = documentSnapshot.get("display_name") ?? 'No Name';
-            String user_id = documentSnapshot.get("user_id") ?? "";
+        // Rest of your role handling...
+        final role = doc.get('role') ?? 'Unknown';
+        final sp = await SharedPreferences.getInstance();
 
-            String email = documentSnapshot.get("email") ?? "";
+        // Save user data to shared preferences
+        sp.setString('role', role);
+        sp.setString('fullName', doc.get('display_name') ?? '');
+        sp.setString('id', doc.get('user_id') ?? '');
+        sp.setString('email', doc.get('email') ?? '');
 
-            SharedPreferences sp = await SharedPreferences.getInstance();
-            sp.setString("role", role);
-            sp.setString("fullName", fullName);
-            sp.setString("id", user_id);
-
-            sp.setString("email", email);
-
-            String? fcmToken = await FirebaseMessaging.instance.getToken();
-
-            print("FCM token: $fcmToken");
-
-            if (role == "Admin") {
-              // String fcmToken = await NotificationService.init();
-              await FirebaseFirestore.instance
-                  .collection('registeredUsers')
-                  .doc(user.uid)
-                  .set({'fcmToken': fcmToken}, SetOptions(merge: true));
-
-              // FirebaseMessaging.instance.onTokenRefresh.listen((e) async {
-              //   await FirebaseFirestore.instance
-              //       .collection('registeredUsers')
-              //       .doc(user.uid)
-              //       .set({'fcmToken': fcmToken}, SetOptions(merge: true));
-              // });
-
-              Navigator.pushReplacement(
+        // Navigation logic
+        switch (role) {
+          case 'Admin':
+            Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => AdminHomePage(
-                          full_name: sp.getString("fullName") ?? '',
-                        )),
-              );
-            } else if (role == "Patient") {
-              String? contact = documentSnapshot.get("contact") ?? "";
-              String? address = documentSnapshot.get("parmanent_address") ?? "";
-              sp.setString("contact", contact ?? "");
-              sp.setString("address", address ?? "");
-              Navigator.pushReplacement(
+                    builder: (_) => AdminHomePage(
+                        full_name: sp.getString('fullName') ?? '')));
+            break;
+          case 'Patient':
+            // Handle patient specific data
+            String? contact = doc.get("contact") ?? "";
+            String? address = doc.get("parmanent_address") ?? "";
+            sp.setString("contact", contact ?? "");
+            sp.setString("address", address ?? "");
+            Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                     builder: (context) => UserHomePage(
-                        full_name: sp.getString("fullName") ?? '')),
-              );
-            } else if (role == "Doctor") {
-              Navigator.pushReplacement(
+                        full_name: sp.getString("fullName") ?? '')));
+            break;
+          case 'Doctor':
+            // Handle doctor navigation
+            Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                     builder: (context) => DoctorHomePage(
                           full_name: sp.getString("fullName") ?? '',
                           uid: sp.getString("id")!,
-                        )),
-              );
-            } else {
-              Utils()
-                  .toastMessage('Invalid user role', Colors.red, Colors.white);
-            }
-          } else {
-            Utils().toastMessage('No user data found. Please contact support.',
-                Colors.orange, Colors.white);
-          }
-        } else {
-          // User is logged out, navigate to the Login Page
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    FrontPage()), // Replace with your LoginPage widget
-          );
+                        )));
+            break;
+          default:
+            Utils().toastMessage('Invalid role', Colors.red, Colors.white);
         }
       });
     } catch (e) {
-      Utils().toastMessage(
-          'An error occurred while routing: $e', Colors.red, Colors.white);
-      print('Error in routing: $e');
+      Utils().toastMessage('Error: $e', Colors.red, Colors.white);
+      print('Routing error: $e');
     }
   }
 

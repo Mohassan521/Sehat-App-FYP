@@ -315,118 +315,94 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
     }
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Dr. ${widget.docData['display_name']}"),
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
+        elevation: 0,
+        backgroundColor: Colors.deepPurple,
+        title: Text(
+          "Dr. ${widget.docData['display_name']}",
+          style: TextStyle(color: Colors.white),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Image section (fixed height)
-              Container(
-                height: screenHeight * 0.3,
-                width: double.infinity,
-                child: Hero(
-                  tag: widget.docData["user_id"],
-                  child: Image.asset(
-                    "assets/images/doctor1.jpg",
-                    fit: BoxFit.cover,
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Image section
+            Stack(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
+                    image: DecorationImage(
+                      image: AssetImage("assets/images/doctor1.jpg"),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
+                Positioned(
+                  bottom: 20,
+                  left: 20,
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.deepPurple.shade100.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Text(
+                      widget.docData['Speciality'],
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepPurple.shade800,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
 
-              // Content section (scrollable)
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Speciality:", style: TextStyle(fontSize: 16)),
-                        Text(
-                          widget.docData['Speciality'],
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Experience:", style: TextStyle(fontSize: 16)),
-                        Text(
-                          '${widget.docData['Experience']} years',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Location:", style: TextStyle(fontSize: 16)),
-                        Text(
-                          widget.docData['Location'],
-                          textAlign: TextAlign.end,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Appointment Fees:",
-                            style: TextStyle(fontSize: 16)),
-                        Text(
-                          'Rs.${widget.docData['Fees']}',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Appointment Days:",
-                            style: TextStyle(fontSize: 16)),
-                        ConstrainedBox(
-                          constraints: BoxConstraints(
-                              maxWidth:
-                                  MediaQuery.sizeOf(context).width * 0.45),
-                          child: Text(
-                            appointmentDaysString,
-                            textAlign: TextAlign.end,
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Appointment Timings",
-                            style: TextStyle(fontSize: 16)),
-                        Text(
-                          formatAppointmentTimings(
-                              widget.docData['appointment_timings']),
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
+            // Content section
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Doctor Details
+                  _buildDetailRow(
+                      "Experience:", "${widget.docData['Experience']} years"),
+                  SizedBox(height: 15),
+                  _buildDetailRow("Location:", widget.docData['Location']),
+                  SizedBox(height: 15),
+                  _buildDetailRow(
+                      "Appointment Fees:", "Rs.${widget.docData['Fees']}"),
+                  SizedBox(height: 15),
+                  _buildDetailRow("Appointment Days:", appointmentDaysString),
+                  SizedBox(height: 15),
+                  _buildDetailRow(
+                    "Appointment Timings:",
+                    formatAppointmentTimings(
+                        widget.docData['appointment_timings']),
+                  ),
 
-                    SizedBox(height: 50),
+                  SizedBox(height: 40),
 
-                    // Book Appointment Button
-                    Center(
-                      child: MaterialButton(
-                        onPressed: () async {
-                          SharedPreferences sp =
-                              await SharedPreferences.getInstance();
-                          String contact = sp.getString("contact") ?? "";
-                          appointmentDialog(
+                  // Buttons Section
+                  Center(
+                    child: Column(
+                      children: [
+                        // Book Appointment Button
+                        MaterialButton(
+                          onPressed: () async {
+                            SharedPreferences sp =
+                                await SharedPreferences.getInstance();
+                            String contact = sp.getString("contact") ?? "";
+                            appointmentDialog(
                               widget.docData['display_name'],
                               widget.full_name,
                               contact,
@@ -434,106 +410,136 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                               widget.docData['appointment_timings']["from"] +
                                   "-" +
                                   widget.docData['appointment_timings']["to"],
-                              widget.docData['Location']);
-                        },
-                        child: Text('Book Appointment'),
-                        padding: EdgeInsets.all(17),
-                        textColor: Colors.white,
-                        color: Colors.deepPurple.shade300,
-                        minWidth: double.infinity,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                      ),
-                    ),
+                              widget.docData['Location'],
+                            );
+                          },
+                          child: Text(
+                            'Book Appointment',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          padding: EdgeInsets.all(15),
+                          textColor: Colors.white,
+                          color: Colors.deepPurple,
+                          minWidth: double.infinity,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        SizedBox(height: 15),
 
-                    SizedBox(height: 15),
-
-                    // Chat Button
-                    MaterialButton(
-                      onPressed: () async {
-                        print(
-                            "Your user ID: ${FirebaseAuth.instance.currentUser?.uid}");
-                        print("Other person ID: ${widget.docData['user_id']}");
-                        final chatExists =
-                            await _databaseService.checkChatExists(
-                                uid1: FirebaseAuth.instance.currentUser?.uid,
-                                uid2: widget.docData['user_id']);
-
-                        if (!chatExists) {
-                          await _databaseService.createNewChat(
+                        // Chat Button
+                        MaterialButton(
+                          onPressed: () async {
+                            final chatExists =
+                                await _databaseService.checkChatExists(
                               uid1: FirebaseAuth.instance.currentUser?.uid,
-                              uid2: widget.docData['user_id']);
-                        }
+                              uid2: widget.docData['user_id'],
+                            );
 
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
+                            if (!chatExists) {
+                              await _databaseService.createNewChat(
+                                uid1: FirebaseAuth.instance.currentUser?.uid,
+                                uid2: widget.docData['user_id'],
+                              );
+                            }
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
                                 builder: (context) => ChatRoom(
-                                      docData: widget.docData,
-                                      full_name: widget.full_name,
-                                    )));
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.chat,
-                            size: 20,
+                                  docData: widget.docData,
+                                  full_name: widget.full_name,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.chat, size: 20),
+                              SizedBox(width: 8),
+                              Text("Chat"),
+                            ],
                           ),
-                          SizedBox(width: 8),
-                          Text("Chat"),
-                        ],
-                      ),
-                      minWidth: double.infinity,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(9.5)),
-                      textColor: Colors.white,
-                      color: Colors.green,
-                      padding: EdgeInsets.all(17),
-                    ),
+                          minWidth: double.infinity,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          textColor: Colors.white,
+                          color: Colors.green,
+                          padding: EdgeInsets.all(15),
+                        ),
+                        SizedBox(height: 15),
 
-                    SizedBox(height: 15),
-
-                    // Call Button
-                    isAvailable == true
-                        ? MaterialButton(
-                            onPressed: () {
-                              _channelController = currentUser!.id;
-                              if (_channelController.isNotEmpty) {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
+                        // Call Button
+                        isAvailable == true
+                            ? MaterialButton(
+                                onPressed: () {
+                                  _channelController = currentUser!.id;
+                                  if (_channelController.isNotEmpty) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
                                         builder: (context) => CallScreen(
-                                              channelName: _channelController,
-                                            )));
-                              }
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.call_made),
-                                SizedBox(width: 8),
-                                Text("Call"),
-                              ],
-                            ),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(9.5)),
-                            textColor: Colors.white,
-                            color: Colors.red,
-                            padding: EdgeInsets.all(17),
-                          )
-                        : Center(
-                            child: const Text(
-                              "Doctor is not available in this time slot for call, however you can chat or book appointment in his fixed hours",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                  ],
-                ),
+                                          channelName: _channelController,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.call_made),
+                                    SizedBox(width: 8),
+                                    Text("Call"),
+                                  ],
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                textColor: Colors.white,
+                                color: Colors.red,
+                                padding: EdgeInsets.all(15),
+                              )
+                            : Center(
+                                child: Text(
+                                  "Doctor is not available for calls. Please chat or book an appointment.",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+        ConstrainedBox(
+          constraints:
+              BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.55),
+          child: Text(
+            value,
+            textAlign: TextAlign.end,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
           ),
-        ));
+        ),
+      ],
+    );
   }
 }

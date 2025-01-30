@@ -22,7 +22,7 @@ exports.sendOrderNotificationTwo = onDocumentCreated("Orders/{orderId}",
           notification: {
             title: "New Order Received!",
             body: `Order ID: ${orderId} from ${customerName}`,
-            click_action: "FLUTTER_NOTIFICATION_CLICK",
+            // click_action: "FLUTTER_NOTIFICATION_CLICK",
           },
           data: {
             orderId: orderId,
@@ -41,11 +41,15 @@ exports.sendOrderNotificationTwo = onDocumentCreated("Orders/{orderId}",
             .filter((token) => token); // Removes undefined tokens
 
         if (tokens.length > 0) {
-          const response = await admin.messaging().send({
+          const response = await admin.messaging().sendEachForMulticast({
             tokens: tokens,
             notification: payload.notification,
           });
+          console.log(`Payload title: ${payload.notification.title}`);
+          console.log(`Payload name: ${payload.data.customerName}`);
           console.log(`Notifications sent: ${response.successCount} success`);
+          console.log("Admin tokens found:", tokens);
+          console.log("First token example:", tokens[0]);
         } else {
           console.log("No valid admin tokens found.");
         }

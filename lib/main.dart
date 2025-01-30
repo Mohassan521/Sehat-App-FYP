@@ -14,9 +14,9 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Utils().registerServices();
 
-  // await NotificationService.init();
-  await NotificationService.localNotiInit();
-  // SharedPreferences sp = await SharedPreferences.getInstance();
+  final notificationService = NotificationService();
+  await notificationService.initialize();
+
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => StatusValueProvider()),
     ChangeNotifierProvider(

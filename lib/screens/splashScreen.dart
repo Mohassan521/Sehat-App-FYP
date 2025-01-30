@@ -25,14 +25,17 @@ class _SplashScreenState extends State<SplashScreen> {
     DatabaseService().route(context);
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [Center(child: Text("Sehat"))],
+        children: [
+          Center(
+            child: Image.asset("assets/images/app-logo.png"),
+          ),
+        ],
       ),
     );
   }

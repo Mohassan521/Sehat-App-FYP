@@ -19,7 +19,8 @@ class UserHomePage extends StatefulWidget {
 }
 
 class _UserHomePageState extends State<UserHomePage> {
-  // https://asset-cdn.lottiefiles
+  TextEditingController _searchController = TextEditingController();
+  String searchText = "";
   String email = "";
 
   void initializeCart() async {
@@ -166,17 +167,49 @@ class _UserHomePageState extends State<UserHomePage> {
               ),
 
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 8.0), // Adjusted padding
                 child: Container(
-                  padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(12)),
+                    color: Colors.grey.shade200, // Softer background
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade400
+                            .withOpacity(0.5), // Subtle shadow
+                        offset: Offset(0, 2),
+                        blurRadius: 6,
+                      ),
+                    ],
+                  ),
                   child: TextField(
+                    controller: _searchController,
+                    onChanged: (value) {
+                      setState(() {
+                        searchText = value
+                            .trim()
+                            .toLowerCase(); // Update searchText dynamically
+                      });
+                    },
                     decoration: InputDecoration(
-                        hintText: "How can we help you?",
-                        border: InputBorder.none,
-                        prefixIcon: Icon(Icons.search)),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 16.0), // Adjusted vertical padding
+                      hintText: "Search for Doctors here",
+                      hintStyle: TextStyle(
+                        color: Colors.grey.shade600, // Softer hint text color
+                        fontSize: 16.0, // Readable size
+                      ),
+                      border: InputBorder.none,
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16.0, right: 8.0), // Icon alignment
+                        child: Icon(
+                          Icons.search,
+                          color: Colors.grey.shade600, // Match hint text color
+                          size: 24.0,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -207,11 +240,11 @@ class _UserHomePageState extends State<UserHomePage> {
                       style:
                           TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      "See All",
-                      style:
-                          TextStyle(fontSize: 16, color: Colors.grey.shade700),
-                    )
+                    // Text(
+                    //   "See All",
+                    //   style:
+                    //       TextStyle(fontSize: 16, color: Colors.grey.shade700),
+                    // )
                   ],
                 ),
               ),
@@ -221,8 +254,8 @@ class _UserHomePageState extends State<UserHomePage> {
               ),
 
               Container(
-                height: MediaQuery.sizeOf(context).height * 0.35,
-                child: StreamBuilder(
+                  height: MediaQuery.sizeOf(context).height * 0.35,
+                  child: StreamBuilder(
                     stream: FirebaseFirestore.instance
                         .collection("registeredUsers")
                         .where("role", isEqualTo: "Doctor")
@@ -240,16 +273,24 @@ class _UserHomePageState extends State<UserHomePage> {
                         return Center(child: Text('No doctors found.'));
                       }
 
-                      List<Widget> doctorTiles = snapshot.data!.docs.map((doc) {
+                      // Filter the data based on searchText
+                      List<Widget> doctorTiles =
+                          snapshot.data!.docs.where((doc) {
+                        Map<String, dynamic> data = doc.data();
+
+                        String name = data['display_name'].toLowerCase();
+                        String location = data['Location'].toLowerCase();
+
+                        // Check if searchText matches the name or location
+                        return searchText.isEmpty ||
+                            name.contains(searchText) ||
+                            location.contains(searchText);
+                      }).map((doc) {
                         Map<String, dynamic> data = doc.data();
                         String name = data['display_name'];
                         String role = data['Speciality'];
                         String location = data['Location'];
-                        // Assuming 'speciality' exists in your Firestore
-                        String imageUrl =
-                            "assets/images/doctor1.jpg"; // Static image, you can modify this to fetch from Firestore if available
-
-                        print("Doctor data object: ${data['display_name']}");
+                        String imageUrl = "assets/images/doctor1.jpg";
 
                         return DoctorsTile(
                           tag: data["user_id"],
@@ -259,12 +300,14 @@ class _UserHomePageState extends State<UserHomePage> {
                           location: location,
                           onTap: () {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => DoctorProfileScreen(
-                                          docData: data,
-                                          full_name: widget.full_name!,
-                                        )));
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DoctorProfileScreen(
+                                  docData: data,
+                                  full_name: name,
+                                ),
+                              ),
+                            );
                           },
                         );
                       }).toList();
@@ -273,8 +316,8 @@ class _UserHomePageState extends State<UserHomePage> {
                         scrollDirection: Axis.horizontal,
                         children: doctorTiles,
                       );
-                    }),
-              ),
+                    },
+                  )),
               SizedBox(
                 height: 15,
               ),

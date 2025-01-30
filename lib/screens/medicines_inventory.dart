@@ -25,7 +25,7 @@ class _MedicineInventoryState extends State<MedicineInventory> {
           "House of Medicines",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.purple,
       ),
       body: Column(
         children: [
