@@ -16,10 +16,33 @@ class AdminHomePage extends StatefulWidget {
 }
 
 class _AdminHomePageState extends State<AdminHomePage> {
+  Future<void> _handleInitialNotification() async {
+    // Handle notification that opened the app
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+
+    if (initialMessage != null) {
+      final orderId = initialMessage.data['orderId'];
+      print('App opened via terminated notification: $orderId');
+      _navigateToOrderDetails(orderId);
+    }
+  }
+
+  void _navigateToOrderDetails(String orderId) {
+    // Example navigation
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DisplayOrders(),
+      ),
+    );
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _handleInitialNotification();
   }
 
   @override

@@ -18,11 +18,26 @@ class NotificationService {
       _showNotification(message);
     });
 
+    FirebaseMessaging.onMessageOpenedApp.listen(handleBackgroundNotification);
+
     // Create notification channel (Android)
     await FlutterLocalNotificationsPlugin()
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(_androidChannel);
+  }
+
+  Future<void> handleBackgroundNotification(RemoteMessage message) async {
+    print('Handling background notification: ${message.messageId}');
+
+    // Add your logic here (e.g., update local database)
+    if (message.data.containsKey('orderId')) {
+      final orderId = message.data['orderId'];
+      print('Background order ID: $orderId');
+    }
+
+    // Show notification in system tray
+    await _showNotification(message);
   }
 
   Future<void> _showNotification(RemoteMessage message) async {

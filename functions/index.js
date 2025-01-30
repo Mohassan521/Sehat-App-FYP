@@ -22,7 +22,7 @@ exports.sendOrderNotificationTwo = onDocumentCreated("Orders/{orderId}",
           notification: {
             title: "New Order Received!",
             body: `Order ID: ${orderId} from ${customerName}`,
-            // click_action: "FLUTTER_NOTIFICATION_CLICK",
+            click_action: "FLUTTER_NOTIFICATION_CLICK",
           },
           data: {
             orderId: orderId,
