@@ -211,29 +211,9 @@ class DatabaseService {
 
         // Handle FCM tokens
         final messaging = FirebaseMessaging.instance;
-
-        // 1. Always get current token on login
         String? currentToken = await messaging.getToken();
-        print('Initial FCM Token: $currentToken');
 
-        // 2. Setup token refresh listener
-        messaging.onTokenRefresh.listen((newToken) async {
-          print('Token refreshed: $newToken');
-          await firestore
-              .collection('registeredUsers')
-              .doc(user.uid)
-              .update({'fcmToken': newToken});
-        });
-
-        // 3. Update Firestore with latest token
-        if (currentToken != null) {
-          await firestore
-              .collection('registeredUsers')
-              .doc(user.uid)
-              .update({'fcmToken': currentToken});
-        }
-
-        // Rest of your role handling...
+        // Get user role
         final role = doc.get('role') ?? 'Unknown';
         final sp = await SharedPreferences.getInstance();
 
@@ -243,7 +223,42 @@ class DatabaseService {
         sp.setString('id', doc.get('user_id') ?? '');
         sp.setString('email', doc.get('email') ?? '');
 
-        // Navigation logic
+        // Remove old token field to avoid conflicts
+        if (role == 'Admin') {
+          await firestore.collection('registeredUsers').doc(user.uid).update({
+            'fcmToken': currentToken,
+            'patientToken':
+                FieldValue.delete() // Remove patient token if exists
+          });
+        } else if (role == 'Patient') {
+          String? contact = doc.get("contact") ?? "";
+          String? address = doc.get("parmanent_address") ?? "";
+          sp.setString("contact", contact ?? "");
+          sp.setString("address", address ?? "");
+          print("Field value for patient: $FieldValue");
+
+          await firestore.collection('registeredUsers').doc(user.uid).update({
+            'patientToken': currentToken,
+            'fcmToken': FieldValue.delete() // Remove admin token if exists
+          });
+        }
+
+        // Listen for token refresh and update the correct field
+        messaging.onTokenRefresh.listen((newToken) async {
+          if (role == 'Admin') {
+            await firestore
+                .collection('registeredUsers')
+                .doc(user.uid)
+                .update({'fcmToken': newToken});
+          } else if (role == 'Patient') {
+            await firestore
+                .collection('registeredUsers')
+                .doc(user.uid)
+                .update({'patientToken': newToken});
+          }
+        });
+
+        // Navigate based on role
         switch (role) {
           case 'Admin':
             Navigator.pushReplacement(
@@ -253,11 +268,6 @@ class DatabaseService {
                         full_name: sp.getString('fullName') ?? '')));
             break;
           case 'Patient':
-            // Handle patient specific data
-            String? contact = doc.get("contact") ?? "";
-            String? address = doc.get("parmanent_address") ?? "";
-            sp.setString("contact", contact ?? "");
-            sp.setString("address", address ?? "");
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -265,7 +275,6 @@ class DatabaseService {
                         full_name: sp.getString("fullName") ?? '')));
             break;
           case 'Doctor':
-            // Handle doctor navigation
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(

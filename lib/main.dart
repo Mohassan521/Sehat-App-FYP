@@ -17,8 +17,8 @@ void main() async {
   NotificationService notificationService = NotificationService();
   await notificationService.initialize();
 
-  // FirebaseMessaging.onBackgroundMessage(
-  //     notificationService.handleBackgroundNotification);
+  FirebaseMessaging.onBackgroundMessage(
+      NotificationService().handleBackgroundNotification);
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => StatusValueProvider()),

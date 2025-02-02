@@ -97,7 +97,7 @@ class _EditOrderStatusState extends State<EditOrderStatus> {
               Consumer<StatusValueProvider>(
                 builder: (context, value, child) {
                   return DropdownButtonFormField<String>(
-                    value: value.selectedValue,
+                    value: widget.orderStatus,
                     items: orderStatuses.map((String status) {
                       return DropdownMenuItem(
                         value: status,

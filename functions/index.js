@@ -1,10 +1,11 @@
-const {onDocumentCreated} = require("firebase-functions/v2/firestore");
+const {onDocumentCreated,
+  onDocumentUpdated}=require("firebase-functions/v2/firestore");
 const admin = require("firebase-admin");
 
 admin.initializeApp();
 
-exports.sendOrderNotificationTwo = onDocumentCreated("Orders/{orderId}",
-    async (event)=> {
+exports.updatedOrdersNotifications = onDocumentCreated("Orders/{orderId}",
+    async (event) => {
       try {
         const snapshot = event.data;
         if (!snapshot) {
@@ -13,47 +14,127 @@ exports.sendOrderNotificationTwo = onDocumentCreated("Orders/{orderId}",
         }
 
         const newValue = snapshot.data();
-        const customerName = newValue.username;
         const orderId = event.params.orderId;
+        const customerName = newValue.username;
 
-        console.log("Triggered for order:", event.params.orderId);
+        console.log(`Triggered for order: ${orderId}`);
 
+        // 1. Fetch Admin users with strict validation
+        const tokensSnapshot = await admin.firestore()
+            .collection("registeredUsers")
+            .where("role", "==", "Admin")
+            .get();
+
+        // 2. Validate both role and token field
+        const validAdminTokens = tokensSnapshot.docs
+            .filter((doc) => {
+              const data = doc.data();
+              return data.role === "Admin" &&
+               data.fcmToken;
+            })
+            .map((doc) => doc.data().fcmToken); // Basic FCM format check
+
+        console.log(`Found ${validAdminTokens.length} valid admin tokens`);
+
+        if (validAdminTokens.length === 0) {
+          console.log("No valid admin tokens available");
+          return;
+        }
+
+        // 3. Prepare and send notification
         const payload = {
           notification: {
             title: "New Order Received!",
             body: `Order ID: ${orderId} from ${customerName}`,
-            click_action: "FLUTTER_NOTIFICATION_CLICK",
+            // click_action: "FLUTTER_NOTIFICATION_CLICK",
           },
           data: {
             orderId: orderId,
             customerName: customerName,
+            notificationType: "adminOrderAlert", // Add type for client handling
           },
+          tokens: validAdminTokens,
         };
 
-        // ✅ Fetch FCM tokens for Admin users only
-        const tokensSnapshot = await admin.firestore()
-            .collection("registeredUsers")
-            .where("role", "==", "Admin") // Correct filtering for admins only
+        const response = await admin.messaging().sendEachForMulticast(payload);
+
+        console.log(`Successfully sent to ${response.successCount} admins`);
+        console.log(`Failed attempts: ${response.failureCount}`);
+      } catch (error) {
+        console.error("Notification error:", error);
+        if (error.errorInfo) {
+          console.error("Firebase error details:", error.errorInfo);
+        }
+      }
+    });
+
+exports.sendOrderStatusUpdate = onDocumentUpdated(
+    "Orders/{orderId}",
+    async (event) => {
+      try {
+        const afterData = event.data.after.data();
+
+        const newStatus = afterData.Status;
+        const patientId = afterData.user_id;
+        const orderId = event.params.orderId;
+
+        // Get patient's FCM token
+        const patientDoc = await admin.firestore()
+            .collection("registeredUsers") // Your patient collection name
+            .doc(patientId)
             .get();
 
-        const tokens = tokensSnapshot.docs
-            .map((doc) => doc.data().fcmToken)
-            .filter((token) => token); // Removes undefined tokens
-
-        if (tokens.length > 0) {
-          const response = await admin.messaging().sendEachForMulticast({
-            tokens: tokens,
-            notification: payload.notification,
-          });
-          console.log(`Payload title: ${payload.notification.title}`);
-          console.log(`Payload name: ${payload.data.customerName}`);
-          console.log(`Notifications sent: ${response.successCount} success`);
-          console.log("Admin tokens found:", tokens);
-          console.log("First token example:", tokens[0]);
-        } else {
-          console.log("No valid admin tokens found.");
+        if (!patientDoc.exists) {
+          console.error("Patient document not found:", patientId);
+          return;
         }
+
+        const patientData = patientDoc.data();
+        const patientTokenValue = patientData.patientToken;
+
+        if (patientData.role !== "Patient") {
+          console.error("Notification rejected - User role:", patientData.role);
+          return;
+        }
+
+        if (!patientTokenValue) {
+          console.error("No patientToken found for patient:", patientId);
+          return;
+        }
+
+        // Prepare notification payload
+        const payload = {
+          notification: {
+            title: "Order Status Updated",
+            body: `Your order ${orderId} is now ${newStatus}`,
+            // click_action: "FLUTTER_NOTIFICATION_CLICK",
+          },
+          data: {
+            orderId: orderId,
+            newStatus: newStatus,
+            type: "statusUpdate", // For handling in Flutter
+            android_channel_id: "orders_channel",
+          },
+          token: patientTokenValue,
+        };
+
+        // Send notification
+        const response = await admin.messaging().send(payload);
+        console.log("Successfully sent notification:", response);
       } catch (error) {
-        console.error("Error sending notification:", error);
+        console.error("Error sending status update:", error);
+        if (error.errorInfo) {
+          console.error("Firebase error details:", error.errorInfo);
+
+          // Auto-clean invalid tokens
+          //   console.log("Attempting to remove invalid token...");
+          //   await admin.firestore()
+          //       .collection("registeredUsers")
+          //       .doc(patientId)
+          //       .update({
+          //         patientToken: admin.firestore.FieldValue.delete(),
+          //       });
+          // }
+        }
       }
     });

@@ -2,7 +2,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
-  final _androidChannel = const AndroidNotificationChannel(
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  final AndroidNotificationChannel _androidChannel =
+      const AndroidNotificationChannel(
     'orders_channel', // 🚨 MUST match Cloud Function
     'Order Notifications',
     importance: Importance.max,
@@ -12,31 +16,39 @@ class NotificationService {
     // Request permissions
     await FirebaseMessaging.instance.requestPermission();
 
-    // Setup foreground handler
+    // Initialize local notifications
+    const AndroidInitializationSettings androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const InitializationSettings initSettings =
+        InitializationSettings(android: androidSettings);
+
+    await _flutterLocalNotificationsPlugin.initialize(initSettings);
+
+    // Create notification channel (Android)
+    await _flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(_androidChannel);
+
+    // ✅ Foreground notification handling
     FirebaseMessaging.onMessage.listen((message) {
-      // Show notification even if app is open
+      print("Foreground Notification received: ${message.notification?.title}");
       _showNotification(message);
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen(handleBackgroundNotification);
-
-    // Create notification channel (Android)
-    await FlutterLocalNotificationsPlugin()
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(_androidChannel);
   }
 
   Future<void> handleBackgroundNotification(RemoteMessage message) async {
     print('Handling background notification: ${message.messageId}');
 
-    // Add your logic here (e.g., update local database)
     if (message.data.containsKey('orderId')) {
       final orderId = message.data['orderId'];
       print('Background order ID: $orderId');
     }
 
-    // Show notification in system tray
+    // Show notification when app is in the background
     await _showNotification(message);
   }
 
@@ -46,13 +58,16 @@ class NotificationService {
       _androidChannel.name,
       importance: Importance.max,
       priority: Priority.high,
+      playSound: true, // Ensure sound is played
     );
 
-    await FlutterLocalNotificationsPlugin().show(
+    final notificationDetails = NotificationDetails(android: android);
+
+    await _flutterLocalNotificationsPlugin.show(
       0,
-      message.notification?.title,
-      message.notification?.body,
-      NotificationDetails(android: android),
+      message.notification?.title ?? 'No Title',
+      message.notification?.body ?? 'No Body',
+      notificationDetails,
     );
   }
 }

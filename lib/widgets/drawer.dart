@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:sehat_app/screens/adminScreens/adminHomePage.dart';
 import 'package:sehat_app/screens/doctorScreens/chatsScreen.dart';
@@ -38,13 +40,41 @@ class _MyDrawerState extends State<MyDrawer> {
     });
   }
 
-  void logout() async {
-    FirebaseAuth.instance.signOut();
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    sp.clear().then((v) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => FrontPage()));
-    });
+  Future<void> logout(BuildContext context) async {
+    final auth = FirebaseAuth.instance;
+    final firestore = FirebaseFirestore.instance;
+    final messaging = FirebaseMessaging.instance;
+    final sp = await SharedPreferences.getInstance();
+
+    // Get current user before signing out
+    User? user = auth.currentUser;
+    if (user != null) {
+      String? role = sp.getString('role');
+
+      // Remove FCM token from Firestore based on role
+      if (role == 'Admin') {
+        await firestore.collection('registeredUsers').doc(user.uid).update({
+          'fcmToken': FieldValue.delete(),
+        });
+      } else if (role == 'Patient') {
+        await firestore.collection('registeredUsers').doc(user.uid).update({
+          'patientToken': FieldValue.delete(),
+        });
+      }
+    }
+
+    // Sign out the user
+    await auth.signOut();
+
+    // Delete local SharedPreferences
+    await sp.clear();
+
+    // Force refresh the FCM token after logout
+    await messaging.deleteToken();
+
+    // Navigate to login screen
+    Navigator.pushAndRemoveUntil(context,
+        MaterialPageRoute(builder: (_) => FrontPage()), (route) => false);
   }
 
   @override
@@ -547,7 +577,7 @@ class _MyDrawerState extends State<MyDrawer> {
                       // NetworkApiServices().logout();
                       // Navigator.pushReplacement(context,
                       //     MaterialPageRoute(builder: (context) => FrontPage()));
-                      logout();
+                      logout(context);
                     },
                     child: Row(
                       children: [
