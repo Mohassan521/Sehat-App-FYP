@@ -84,6 +84,7 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
   }
 
   var role = "Doctor";
+  bool isLoading = false;
 
   final _auth = FirebaseAuth.instance;
 
@@ -140,232 +141,223 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
       String location,
       String dob,
       String fees) async {
-    await _auth
-        .createUserWithEmailAndPassword(email: email, password: password)
-        .then((value) => {
-              postDetailsToFirestore(email, role, displayName, speciality,
-                  experience, location, dob, fees),
-            })
-        .catchError((e) {
-      print(e.toString());
+    setState(() {
+      isLoading = true; // Show loader
     });
+
+    try {
+      await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      await postDetailsToFirestore(email, role, displayName, speciality,
+          experience, location, dob, fees);
+
+      setState(() {
+        isLoading = false; // Hide loader when done
+      });
+
+      // Show success message or navigate to another screen
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Signup successful!")));
+    } catch (e) {
+      setState(() {
+        isLoading = false; // Hide loader on error
+      });
+
+      // Show error message
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          "Add Doctor",
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.purple,
-      ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Full Name"),
-              SizedBox(
-                height: 5,
-              ),
-              TextFormField(
-                controller: name,
-                decoration: InputDecoration(border: OutlineInputBorder()),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text("Email"),
-              SizedBox(
-                height: 5,
-              ),
-              TextFormField(
-                controller: emailController,
-                decoration: InputDecoration(border: OutlineInputBorder()),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text("Contact Number"),
-              SizedBox(
-                height: 5,
-              ),
-              TextFormField(
-                controller: contact,
-                decoration: InputDecoration(border: OutlineInputBorder()),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text("Date Of Birth"),
-              SizedBox(height: 5),
-              TextFormField(
-                controller: dob,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-                readOnly: true, // Disable typing
-                onTap: () async {
-                  DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate:
-                        DateTime.now(), // The current date as the default
-                    firstDate: DateTime(1900), // The earliest allowable date
-                    lastDate:
-                        DateTime.now(), // The latest allowable date (today)
-                  );
-
-                  if (pickedDate != null) {
-                    // Format the date and set it to the controller
-                    dob.text =
-                        "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
-                  }
-                },
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text("Years Of Experience"),
-              SizedBox(
-                height: 5,
-              ),
-              TextFormField(
-                controller: experience,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(border: OutlineInputBorder()),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text("Speciality"),
-              SizedBox(
-                height: 5,
-              ),
-              TextFormField(
-                controller: speciality,
-                decoration: InputDecoration(border: OutlineInputBorder()),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text("Job Location (Mention Hospital Name)"),
-              SizedBox(
-                height: 5,
-              ),
-              TextFormField(
-                controller: job_location,
-                decoration: InputDecoration(border: OutlineInputBorder()),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text("Appointment Fees"),
-              SizedBox(
-                height: 5,
-              ),
-              TextFormField(
-                controller: feesController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(border: OutlineInputBorder()),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text("Select Days of Appointment"),
-              SizedBox(
-                height: 5,
-              ),
-              Column(
-                children: days.map((day) {
-                  return CheckboxListTile(
-                    title: Text(day),
-                    value: selectedDays[day],
-                    onChanged: (bool? value) {
-                      setState(() {
-                        selectedDays[day] = value!;
-                      });
-                    },
-                  );
-                }).toList(),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text("Appointment Timings"),
-              SizedBox(
-                height: 5,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(title: Text("Sign Up")),
+          body: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 15),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text("Full Name"),
+                  SizedBox(height: 5),
+                  TextFormField(
+                      controller: name,
+                      decoration:
+                          InputDecoration(border: OutlineInputBorder())),
+                  SizedBox(height: 10),
+                  Text("Email"),
+                  SizedBox(height: 5),
+                  TextFormField(
+                      controller: emailController,
+                      decoration:
+                          InputDecoration(border: OutlineInputBorder())),
+                  SizedBox(height: 10),
+                  Text("Contact Number"),
+                  SizedBox(height: 5),
+                  TextFormField(
+                      controller: contact,
+                      decoration:
+                          InputDecoration(border: OutlineInputBorder())),
+                  SizedBox(height: 10),
+                  Text("Date Of Birth"),
+                  SizedBox(height: 5),
+                  TextFormField(
+                    controller: dob,
+                    decoration: InputDecoration(border: OutlineInputBorder()),
+                    readOnly: true,
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime.now(),
+                      );
+
+                      if (pickedDate != null) {
+                        dob.text =
+                            "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+                      }
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  Text("Years Of Experience"),
+                  SizedBox(height: 5),
+                  TextFormField(
+                      controller: experience,
+                      keyboardType: TextInputType.number,
+                      decoration:
+                          InputDecoration(border: OutlineInputBorder())),
+                  SizedBox(height: 10),
+                  Text("Speciality"),
+                  SizedBox(height: 5),
+                  TextFormField(
+                      controller: speciality,
+                      decoration:
+                          InputDecoration(border: OutlineInputBorder())),
+                  SizedBox(height: 10),
+                  Text("Job Location (Mention Hospital Name)"),
+                  SizedBox(height: 5),
+                  TextFormField(
+                      controller: job_location,
+                      decoration:
+                          InputDecoration(border: OutlineInputBorder())),
+                  SizedBox(height: 10),
+                  Text("Appointment Fees"),
+                  SizedBox(height: 5),
+                  TextFormField(
+                      controller: feesController,
+                      keyboardType: TextInputType.number,
+                      decoration:
+                          InputDecoration(border: OutlineInputBorder())),
+                  SizedBox(height: 10),
+                  Text("Select Days of Appointment"),
+                  SizedBox(height: 5),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: days.map((day) {
+                      return CheckboxListTile(
+                        title: Text(day),
+                        value: selectedDays[day],
+                        onChanged: (bool? value) {
+                          setState(() {
+                            selectedDays[day] = value!;
+                          });
+                        },
+                      );
+                    }).toList(),
+                  ),
+                  SizedBox(height: 10),
+                  Text("Appointment Timings"),
+                  SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Start Time"),
-                      ElevatedButton(
-                        onPressed: () => _pickTime(context, true),
-                        child: Text(_formatTime(startTime)),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Start Time"),
+                          ElevatedButton(
+                            onPressed: () => _pickTime(context, true),
+                            child: Text(_formatTime(startTime)),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("End Time"),
+                          ElevatedButton(
+                            onPressed: startTime == null
+                                ? null
+                                : () => _pickTime(context, false),
+                            child: Text(_formatTime(endTime)),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  startTime == null ? Colors.grey : null,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("End Time"),
-                      ElevatedButton(
-                        onPressed: startTime == null
-                            ? null
-                            : () => _pickTime(context, false),
-                        child: Text(_formatTime(endTime)),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: startTime == null
-                              ? Colors.grey
-                              : null, // Disable button if no start time
-                        ),
-                      ),
-                    ],
+                  SizedBox(height: 10),
+                  Text("Password"),
+                  SizedBox(height: 5),
+                  TextFormField(
+                      controller: passwordController,
+                      decoration:
+                          InputDecoration(border: OutlineInputBorder())),
+                  SizedBox(height: 20),
+                  MaterialButton(
+                    onPressed: isLoading
+                        ? null // Disable button while loading
+                        : () {
+                            signUp(
+                              emailController.text,
+                              passwordController.text,
+                              role,
+                              name.text,
+                              speciality.text,
+                              experience.text,
+                              job_location.text,
+                              dob.text,
+                              feesController.text,
+                            );
+                          },
+                    child: isLoading
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircularProgressIndicator(
+                                  color: Colors.white, strokeWidth: 2),
+                              SizedBox(width: 10),
+                              Text("Processing..."),
+                            ],
+                          )
+                        : Text("Submit"),
+                    minWidth: double.infinity,
+                    height: 50,
+                    color: isLoading ? Colors.grey : Colors.purple,
+                    textColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
                   ),
+                  SizedBox(height: 20),
                 ],
               ),
-              SizedBox(
-                height: 10,
-              ),
-              Text("Password"),
-              SizedBox(
-                height: 5,
-              ),
-              TextFormField(
-                controller: passwordController,
-                decoration: InputDecoration(border: OutlineInputBorder()),
-              ),
-              MaterialButton(
-                onPressed: () {
-                  signUp(
-                      emailController.text,
-                      passwordController.text,
-                      role,
-                      name.text,
-                      speciality.text,
-                      experience.text,
-                      job_location.text,
-                      dob.text,
-                      feesController.text);
-                },
-                child: Text("Submit"),
-                minWidth: double.infinity,
-                color: Colors.purple,
-                textColor: Colors.white,
-              )
-            ],
+            ),
           ),
         ),
-      ),
+        if (isLoading) // Show full-screen loader
+          Container(
+            color: Colors.black.withOpacity(0.5),
+            child: Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
+          ),
+      ],
     );
   }
 }

@@ -22,7 +22,9 @@ class _SplashScreenState extends State<SplashScreen> {
     // TODO: implement initState
     super.initState();
     // isLogin();
-    DatabaseService().route(context);
+    Future.delayed(Duration(seconds: 5), () {
+      DatabaseService().route(context);
+    });
   }
 
   @override

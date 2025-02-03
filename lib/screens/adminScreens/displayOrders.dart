@@ -87,7 +87,7 @@ class _DisplayOrdersState extends State<DisplayOrders> {
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 16.0), // Adjusted vertical padding
-                    hintText: "Search for Doctors here",
+                    hintText: "Search using Order ID",
                     hintStyle: TextStyle(
                       color: Colors.grey.shade600, // Softer hint text color
                       fontSize: 16.0, // Readable size
