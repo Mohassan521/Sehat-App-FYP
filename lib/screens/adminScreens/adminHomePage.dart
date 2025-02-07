@@ -56,75 +56,78 @@ class _AdminHomePageState extends State<AdminHomePage> {
         // centerTitle: true,
         backgroundColor: Colors.purple,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 15),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceEvenly, // Spacing between cards
-              children: [
-                AdminOptionTiles(
-                  tileName: "Add Doctor",
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AddDoctorScreen()));
-                  },
-                ),
-                SizedBox(width: 10), // Add space between the two cards
-                AdminOptionTiles(
-                  tileName: "Add Admin",
-                  onTap: () {},
-                ),
-              ],
-            ),
-            SizedBox(height: 20), // Space between rows
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                AdminOptionTiles(
-                  tileName: "Add Medicines",
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AddMedicines()));
-                  },
-                ),
-                SizedBox(width: 10), // Add space between the cards
-                AdminOptionTiles(
-                  tileName: "Display Orders",
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DisplayOrders()));
-                  },
-                ),
-              ],
-            ),
-            SizedBox(height: 20), // Space between rows
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                AdminOptionTiles(
-                  tileName: "Display Medicines",
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DisplayMedicines(
-                                  full_name: widget.full_name,
-                                )));
-                  },
-                ),
-                // SizedBox(width: 10), // Add space between the cards
-                Container()
-              ],
-            ),
-          ],
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 15),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment:
+                    MainAxisAlignment.spaceEvenly, // Spacing between cards
+                children: [
+                  AdminOptionTiles(
+                    tileName: "Add Doctor",
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddDoctorScreen()));
+                    },
+                  ),
+                  SizedBox(width: 10), // Add space between the two cards
+                  AdminOptionTiles(
+                    tileName: "Add Admin",
+                    onTap: () {},
+                  ),
+                ],
+              ),
+              SizedBox(height: 20), // Space between rows
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  AdminOptionTiles(
+                    tileName: "Add Medicines",
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddMedicines()));
+                    },
+                  ),
+                  SizedBox(width: 10), // Add space between the cards
+                  AdminOptionTiles(
+                    tileName: "Display Orders",
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DisplayOrders()));
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: 20), // Space between rows
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  AdminOptionTiles(
+                    tileName: "Display Medicines",
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DisplayMedicines(
+                                    full_name: widget.full_name,
+                                  )));
+                    },
+                  ),
+                  // SizedBox(width: 10), // Add space between the cards
+                  Container()
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

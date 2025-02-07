@@ -136,9 +136,11 @@ class _AddMedicinesState extends State<AddMedicines> {
                 TextFormField(
                   controller: medName,
                   decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(12),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10))),
+                    contentPadding: EdgeInsets.all(12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
                 SizedBox(
                   height: 10,

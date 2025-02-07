@@ -41,6 +41,7 @@ class _UserHomePageState extends State<UserHomePage> {
     print("getting full name in patient home page: ${widget.full_name}");
     print("getting email in patient home page: $email");
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       drawer: MyDrawer(
         full_name: widget.full_name!,
       ),

@@ -126,7 +126,7 @@ class _EditAppointmentStatusState extends State<EditAppointmentStatus> {
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       isExpanded: true,
-                      value: widget.data["Appointment Status"],
+                      value: value.selectedValue,
                       items: appointmentStatus.map((String status) {
                         return DropdownMenuItem(
                           value: status,

@@ -174,7 +174,16 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
     return Stack(
       children: [
         Scaffold(
-          appBar: AppBar(title: Text("Sign Up")),
+          appBar: AppBar(
+            iconTheme: IconThemeData(color: Colors.white),
+            title: Text(
+              "Add Doctor",
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            centerTitle: true,
+            backgroundColor: Colors.purple,
+          ),
           body: Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 15),
             child: SingleChildScrollView(

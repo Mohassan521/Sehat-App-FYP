@@ -16,15 +16,14 @@ class _DisplayMedicinesState extends State<DisplayMedicines> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: MyDrawer(full_name: widget.full_name),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.purple,
         title: const Text(
           "Medicines",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontWeight: FontWeight.w700, fontSize: 16.5, color: Colors.white),
         ),
-        centerTitle: true,
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection("Medicines").snapshots(),

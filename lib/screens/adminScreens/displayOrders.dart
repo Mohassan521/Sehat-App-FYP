@@ -50,15 +50,21 @@ class _DisplayOrdersState extends State<DisplayOrders> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Colors.purple,
         title: const Text(
           "Orders",
-          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16.5),
+          style: TextStyle(
+              fontWeight: FontWeight.w700, fontSize: 16.5, color: Colors.white),
         ),
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
           children: [
+            SizedBox(
+              height: 25,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: 16.0, vertical: 8.0), // Adjusted padding
