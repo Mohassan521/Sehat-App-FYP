@@ -256,11 +256,27 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
                       );
                     }
 
+                    var completedAppointments = snapshot.data!.docs
+                        .where((doc) =>
+                            doc.data()["Appointment Status"] == "Pending")
+                        .toList();
+
+                    if (completedAppointments.isEmpty) {
+                      return Center(
+                        child: Text(
+                          "No completed appointments yet",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w700),
+                        ),
+                      );
+                    }
+
                     // Retrieve the list of documents
                     var appointments = snapshot.data!.docs;
 
                     return ListView.builder(
-                      itemCount: appointments.length,
+                      itemCount: completedAppointments.length,
                       itemBuilder: (context, index) {
                         var data = appointments[index].data();
 

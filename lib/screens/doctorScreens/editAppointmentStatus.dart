@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sehat_app/Provider/provider.dart';
+import 'package:sehat_app/screens/callScreen.dart';
 import 'package:sehat_app/screens/chatRoom.dart';
 import 'package:sehat_app/services/database_service.dart';
 
@@ -16,6 +17,7 @@ class EditAppointmentStatus extends StatefulWidget {
 class _EditAppointmentStatusState extends State<EditAppointmentStatus> {
   DatabaseService _databaseService = DatabaseService();
   late String _selectedStatus;
+  String _channelController = "";
   final List<String> appointmentStatus = [
     'Pending',
     'Completed',
@@ -241,6 +243,17 @@ class _EditAppointmentStatusState extends State<EditAppointmentStatus> {
               icon: Icons.call,
               onPressed: () {
                 // Call logic here
+                _channelController = FirebaseAuth.instance.currentUser!.uid;
+                if (_channelController.isNotEmpty) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CallScreen(
+                        channelName: _channelController,
+                      ),
+                    ),
+                  );
+                }
               },
             ),
           ],
