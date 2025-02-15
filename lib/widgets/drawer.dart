@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:sehat_app/screens/adminScreens/adminHomePage.dart';
 import 'package:sehat_app/screens/doctorScreens/chatsScreen.dart';
+import 'package:sehat_app/screens/doctorScreens/completedAppointments.dart';
 import 'package:sehat_app/screens/doctorScreens/doctorHomePage.dart';
 import 'package:sehat_app/screens/frontPage.dart';
 import 'package:sehat_app/screens/medicines_inventory.dart';
@@ -162,13 +163,17 @@ class _MyDrawerState extends State<MyDrawer> {
                   Visibility(
                     visible: role == "Doctor" ? true : false,
                     child: InkWell(
-                      onTap: () {
+                      onTap: () async {
+                        SharedPreferences sp =
+                            await SharedPreferences.getInstance();
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => OrdersScreen(
-                                      full_name: widget.full_name,
-                                    )));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CompletedAppointments(
+                              uid: sp.getString("id") ?? "",
+                            ),
+                          ),
+                        );
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,

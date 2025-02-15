@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:sehat_app/screens/patientOrderedItems.dart';
 import 'package:sehat_app/widgets/drawer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -144,7 +145,17 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                         ],
                                       ),
                                       InkWell(
-                                        onTap: () {},
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PatientOrderedItems(
+                                                        docs: order,
+                                                        order_id:
+                                                            order["order_id"],
+                                                      )));
+                                        },
                                         child: Icon(
                                           Icons.arrow_forward_ios,
                                           size: 14,

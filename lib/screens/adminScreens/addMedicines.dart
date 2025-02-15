@@ -65,6 +65,7 @@ class _AddMedicinesState extends State<AddMedicines> {
         "Medicine Category": category,
         "Description": description,
         "Dosage Form": dosage,
+        "Strength": strength,
         "Manufacturer": manufacturer,
         "Pharmacy Name": location,
         "Price (per strip)": price,

@@ -146,6 +146,12 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                     value: "Rs. ${widget.medDetails["Price (per strip)"]}",
                     icon: Icons.price_change_outlined,
                   ),
+                  _buildDetailCard(
+                    title: "Strength",
+                    value:
+                        "${widget.medDetails["Strength"] ?? "Not Mentioned"}",
+                    icon: Icons.medical_information,
+                  ),
 
                   // Quantity Selector
                   const SizedBox(height: 20),
@@ -185,7 +191,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                               });
                             },
                             icon: Icon(Icons.add_circle_outline),
-                            color: Colors.orange,
+                            color: Colors.black,
                           ),
                         ],
                       ),
@@ -195,7 +201,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
 
                   // Add to Cart Button
                   Center(
-                    child: ElevatedButton(
+                    child: MaterialButton(
                       onPressed: () async {
                         print("quantity value: $qty");
                         SharedPreferences sp =
@@ -241,15 +247,14 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                               Colors.orange, Colors.white);
                         }
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 40),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 5,
+                      color: Colors.purple,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 40),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
+                      elevation: 5,
+                      minWidth: double.infinity,
                       child: const Text(
                         "Add to Cart",
                         style: TextStyle(
@@ -288,7 +293,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
       ),
       child: Row(
         children: [
-          Icon(icon, color: Colors.orange, size: 28),
+          Icon(icon, color: Colors.purple, size: 28),
           const SizedBox(width: 15),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

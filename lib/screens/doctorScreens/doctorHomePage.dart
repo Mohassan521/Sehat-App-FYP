@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sehat_app/screens/doctorScreens/doctorProfile.dart';
 import 'package:sehat_app/screens/doctorScreens/editAppointmentStatus.dart';
+import 'package:sehat_app/screens/profile.dart';
 import 'package:sehat_app/widgets/doctorCategories.dart';
 import 'package:sehat_app/widgets/doctorDrawer.dart';
 import 'package:sehat_app/widgets/drawer.dart';
@@ -53,12 +54,22 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
                         ),
                       ],
                     ),
-                    Container(
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                            color: Colors.deepPurple.shade100,
-                            borderRadius: BorderRadius.circular(12)),
-                        child: Icon(Icons.person)),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ProfileScreen(
+                                      full_name: widget.full_name!,
+                                    )));
+                      },
+                      child: Container(
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                              color: Colors.deepPurple.shade100,
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Icon(Icons.person)),
+                    ),
                   ],
                 ),
               ),
@@ -67,84 +78,116 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
                 height: 20,
               ),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Container(
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                      color: Colors.pink.shade100,
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Row(
-                    children: [
-                      // animation or image
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              //   child: Container(
+              //     padding: EdgeInsets.all(20),
+              //     decoration: BoxDecoration(
+              //         color: Colors.pink.shade100,
+              //         borderRadius: BorderRadius.circular(12)),
+              //     child: Row(
+              //       children: [
+              //         // animation or image
 
-                      Container(
-                          height: 100,
-                          width: 100,
-                          child: LottieBuilder.network(
-                              "https://lottie.host/4dfc91ff-dd16-4617-803f-85cb4e4f0c7f/ceb4eLE4ap.json")),
+              //         Container(
+              //             height: 100,
+              //             width: 100,
+              //             child: LottieBuilder.network(
+              //                 "https://lottie.host/4dfc91ff-dd16-4617-803f-85cb4e4f0c7f/ceb4eLE4ap.json")),
 
-                      SizedBox(
-                        width: 20,
-                      ),
+              //         SizedBox(
+              //           width: 20,
+              //         ),
 
-                      // text
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "How do you feel?",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 12,
-                            ),
-                            Text(
-                              "Fill out your Medical Card Right Now",
-                              style: TextStyle(fontSize: 14),
-                            ),
-                            SizedBox(
-                              height: 12,
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                  color: Colors.deepPurple,
-                                  borderRadius: BorderRadius.circular(12)),
-                              child: Center(
-                                  child: Text(
-                                "Get Started",
-                                style: TextStyle(color: Colors.white),
-                              )),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              //         // text
+              //         Expanded(
+              //           child: Column(
+              //             crossAxisAlignment: CrossAxisAlignment.start,
+              //             children: [
+              //               Text(
+              //                 "How do you feel?",
+              //                 style: TextStyle(
+              //                     fontSize: 16, fontWeight: FontWeight.bold),
+              //               ),
+              //               SizedBox(
+              //                 height: 12,
+              //               ),
+              //               Text(
+              //                 "Fill out your Medical Card Right Now",
+              //                 style: TextStyle(fontSize: 14),
+              //               ),
+              //               SizedBox(
+              //                 height: 12,
+              //               ),
+              //               Container(
+              //                 padding: EdgeInsets.all(12),
+              //                 decoration: BoxDecoration(
+              //                     color: Colors.deepPurple,
+              //                     borderRadius: BorderRadius.circular(12)),
+              //                 child: Center(
+              //                     child: Text(
+              //                   "Get Started",
+              //                   style: TextStyle(color: Colors.white),
+              //                 )),
+              //               )
+              //             ],
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
 
               // search area
 
-              SizedBox(
-                height: 25,
-              ),
+              // SizedBox(
+              //   height: 10,
+              // ),
 
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 8.0), // Adjusted padding
                 child: Container(
-                  padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(12)),
+                    color: Colors.grey.shade200, // Softer background
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade400
+                            .withOpacity(0.5), // Subtle shadow
+                        offset: Offset(0, 2),
+                        blurRadius: 6,
+                      ),
+                    ],
+                  ),
                   child: TextField(
+                    // controller: _searchController,
+                    onChanged: (value) {
+                      // setState(() {
+                      //   searchText = value
+                      //       .trim()
+                      //       .toLowerCase(); // Update searchText dynamically
+                      // });
+                    },
                     decoration: InputDecoration(
-                        hintText: "How can we help you?",
-                        border: InputBorder.none,
-                        prefixIcon: Icon(Icons.search)),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 16.0), // Adjusted vertical padding
+                      hintText: "Search for Appointments here",
+                      hintStyle: TextStyle(
+                        color: Colors.grey.shade600, // Softer hint text color
+                        fontSize: 16.0, // Readable size
+                      ),
+                      border: InputBorder.none,
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16.0, right: 8.0), // Icon alignment
+                        child: Icon(
+                          Icons.search,
+                          color: Colors.grey.shade600, // Match hint text color
+                          size: 24.0,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -175,11 +218,11 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
                       style:
                           TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      "See All",
-                      style:
-                          TextStyle(fontSize: 16, color: Colors.grey.shade700),
-                    )
+                    // Text(
+                    //   "See All",
+                    //   style:
+                    //       TextStyle(fontSize: 16, color: Colors.grey.shade700),
+                    // )
                   ],
                 ),
               ),
