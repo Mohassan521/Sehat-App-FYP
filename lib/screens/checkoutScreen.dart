@@ -366,7 +366,8 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const CompletedAnyTask(
+                                      builder: (context) => CompletedAnyTask(
+                                          name: name,
                                           path:
                                               'assets/images/order-placed.json',
                                           message:

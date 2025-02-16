@@ -24,13 +24,14 @@ class _CallScreenState extends State<CallScreen> {
   void initAgora(String channelName) async {
     // f0d047423fdc47d8aef33adad735395e
     // 007eJxTYPAuiyr48+po39k4p5tuYYs0GoKk5l+6HVtzJKRZcs8xtUsKDGkGKQYm5iZGxmkpySbmKRaJqWnGxokpiSnmxqbGlqap399uSG8IZGRQbZNgYIRCEJ+PIb8oJbWoOD45IzEvLzWHgQEAM/AlTg==
+    // UbitKU12#$
     client = AgoraClient(
         agoraConnectionData: AgoraConnectionData(
             appId: "f0d047423fdc47d8aef33adad735395e",
             channelName: channelName,
             username: "user",
             tempToken:
-                "007eJxTYPAuiyr48+po39k4p5tuYYs0GoKk5l+6HVtzJKRZcs8xtUsKDGkGKQYm5iZGxmkpySbmKRaJqWnGxokpiSnmxqbGlqap399uSG8IZGRQbZNgYIRCEJ+PIb8oJbWoOD45IzEvLzWHgQEAM/AlTg=="));
+                "007eJxTYFDUrRK7xJVxhnXj6+kFLTkZ82adfSpcz7JPq7qYpSczerMCQ5pBioGJuYmRcVpKsol5ikViapqxcWJKYoq5samxpWmq5d2N6Q2BjAy+JhMYGKEQxOdjyC9KSS0qjk/OSMzLS81hYAAANnkiaw=="));
     await client!.initialize();
     setState(() {});
   }

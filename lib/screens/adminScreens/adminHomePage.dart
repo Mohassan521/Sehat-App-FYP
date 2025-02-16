@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:sehat_app/screens/adminScreens/addAdmin.dart';
 import 'package:sehat_app/screens/adminScreens/addDoctor.dart';
 import 'package:sehat_app/screens/adminScreens/addMedicines.dart';
 import 'package:sehat_app/screens/adminScreens/displayMedicines.dart';
@@ -72,13 +73,22 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => AddDoctorScreen()));
+                              builder: (context) => AddDoctorScreen(
+                                    name: widget.full_name,
+                                  )));
                     },
                   ),
                   SizedBox(width: 10), // Add space between the two cards
                   AdminOptionTiles(
                     tileName: "Add Admin",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddAdmin(
+                                    name: widget.full_name,
+                                  )));
+                    },
                   ),
                 ],
               ),
@@ -92,7 +102,9 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => AddMedicines()));
+                              builder: (context) => AddMedicines(
+                                    name: widget.full_name,
+                                  )));
                     },
                   ),
                   SizedBox(width: 10), // Add space between the cards

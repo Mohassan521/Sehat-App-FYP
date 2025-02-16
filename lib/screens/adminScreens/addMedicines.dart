@@ -12,7 +12,8 @@ import 'package:sehat_app/services/storage_service.dart';
 import 'package:sehat_app/widgets/completed.dart';
 
 class AddMedicines extends StatefulWidget {
-  const AddMedicines({super.key});
+  final String name;
+  const AddMedicines({super.key, required this.name});
 
   @override
   State<AddMedicines> createState() => _AddMedicinesState();
@@ -82,6 +83,7 @@ class _AddMedicinesState extends State<AddMedicines> {
         context,
         MaterialPageRoute(
           builder: (context) => CompletedAnyTask(
+            name: widget.name,
             role: "Admin",
             path: "assets/images/done.json",
             message: "Medicine Added Successfully",

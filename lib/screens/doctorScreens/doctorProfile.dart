@@ -404,7 +404,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                             String contact = sp.getString("contact") ?? "";
                             appointmentDialog(
                               widget.docData['display_name'],
-                              widget.full_name,
+                              sp.getString("fullName") ?? "",
                               contact,
                               widget.docData['Fees'],
                               widget.docData['appointment_timings']["from"] +

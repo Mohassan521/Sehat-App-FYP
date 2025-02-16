@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:sehat_app/widgets/completed.dart';
 
 class AddDoctorScreen extends StatefulWidget {
-  const AddDoctorScreen({super.key});
+  final String name;
+  const AddDoctorScreen({super.key, required this.name});
 
   @override
   State<AddDoctorScreen> createState() => _AddDoctorScreenState();
@@ -127,6 +128,7 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
         context,
         MaterialPageRoute(
             builder: (context) => CompletedAnyTask(
+                name: widget.name,
                 path: 'assets/images/done.json',
                 message: "Doctor Added Succesfully")));
   }

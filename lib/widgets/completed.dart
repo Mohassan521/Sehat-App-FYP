@@ -3,23 +3,29 @@ import 'package:lottie/lottie.dart';
 import 'package:sehat_app/screens/adminScreens/adminHomePage.dart';
 import 'package:sehat_app/screens/medicines_inventory.dart';
 import 'package:sehat_app/screens/userHomePage.dart';
+import 'package:sehat_app/widgets/drawer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CompletedAnyTask extends StatelessWidget {
   final String? role;
   final String path;
   final String message;
+  final String name;
   const CompletedAnyTask({
     super.key,
     required this.message,
     required this.path,
     this.role,
+    required this.name,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(),
+      drawer: MyDrawer(full_name: name),
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -35,66 +41,66 @@ class CompletedAnyTask extends StatelessWidget {
           SizedBox(
             height: 90,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              InkWell(
-                onTap: () async {
-                  SharedPreferences sp = await SharedPreferences.getInstance();
-                  String role = sp.getString("role") ?? "";
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => role == "Patient"
-                              ? UserHomePage(
-                                  full_name: sp.getString("fullName"),
-                                )
-                              : AdminHomePage(
-                                  full_name: sp.getString("fullName")!)));
-                },
-                child: const Column(
-                  children: [
-                    Icon(
-                      Icons.home_outlined,
-                      size: 32,
-                    ),
-                    Text(
-                      "Home Screen",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 35,
-              ),
-              role == "Patient"
-                  ? InkWell(
-                      onTap: () async {
-                        SharedPreferences sp =
-                            await SharedPreferences.getInstance();
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MedicineInventory(
-                                    full_name: sp.getString("fullName")!)));
-                      },
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.local_pharmacy_outlined,
-                            size: 32,
-                          ),
-                          Text("Medicines Inventory",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w600))
-                        ],
-                      ),
-                    )
-                  : SizedBox(),
-            ],
-          )
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     InkWell(
+          //       onTap: () async {
+          //         SharedPreferences sp = await SharedPreferences.getInstance();
+          //         String role = sp.getString("role") ?? "";
+          //         Navigator.pushReplacement(
+          //             context,
+          //             MaterialPageRoute(
+          //                 builder: (context) => role == "Patient"
+          //                     ? UserHomePage(
+          //                         full_name: sp.getString("fullName"),
+          //                       )
+          //                     : AdminHomePage(
+          //                         full_name: sp.getString("fullName")!)));
+          //       },
+          //       child: const Column(
+          //         children: [
+          //           Icon(
+          //             Icons.home_outlined,
+          //             size: 32,
+          //           ),
+          //           Text(
+          //             "Home Screen",
+          //             style:
+          //                 TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          //           )
+          //         ],
+          //       ),
+          //     ),
+          //     SizedBox(
+          //       width: 35,
+          //     ),
+          //     role == "Patient"
+          //         ? InkWell(
+          //             onTap: () async {
+          //               SharedPreferences sp =
+          //                   await SharedPreferences.getInstance();
+          //               Navigator.pushReplacement(
+          //                   context,
+          //                   MaterialPageRoute(
+          //                       builder: (context) => MedicineInventory(
+          //                           full_name: sp.getString("fullName")!)));
+          //             },
+          //             child: Column(
+          //               children: [
+          //                 Icon(
+          //                   Icons.local_pharmacy_outlined,
+          //                   size: 32,
+          //                 ),
+          //                 Text("Medicines Inventory",
+          //                     style: TextStyle(
+          //                         fontSize: 16, fontWeight: FontWeight.w600))
+          //               ],
+          //             ),
+          //           )
+          //         : SizedBox(),
+          //   ],
+          // )
         ],
       ),
     );
