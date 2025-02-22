@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -22,6 +23,13 @@ class _UserHomePageState extends State<UserHomePage> {
   TextEditingController _searchController = TextEditingController();
   String searchText = "";
   String email = "";
+
+  final List<String> imagePaths = [
+    'assets/images/promotion1.jpg',
+    'assets/images/promotion2.jpg',
+    'assets/images/promotion3.jpg',
+    'assets/images/promotion4.jpg',
+  ];
 
   void initializeCart() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
@@ -101,65 +109,86 @@ class _UserHomePageState extends State<UserHomePage> {
                 height: 20,
               ),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Container(
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                      color: Colors.pink.shade100,
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Row(
-                    children: [
-                      // animation or image
-
-                      Container(
-                          height: 100,
-                          width: 100,
-                          child: LottieBuilder.network(
-                              "https://lottie.host/4dfc91ff-dd16-4617-803f-85cb4e4f0c7f/ceb4eLE4ap.json")),
-
-                      SizedBox(
-                        width: 20,
-                      ),
-
-                      // text
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "How do you feel?",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 12,
-                            ),
-                            Text(
-                              "Fill out your Medical Card Right Now",
-                              style: TextStyle(fontSize: 14),
-                            ),
-                            SizedBox(
-                              height: 12,
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                  color: Colors.deepPurple,
-                                  borderRadius: BorderRadius.circular(12)),
-                              child: Center(
-                                  child: Text(
-                                "Get Started",
-                                style: TextStyle(color: Colors.white),
-                              )),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+              CarouselSlider(
+                options: CarouselOptions(
+                  height:
+                      MediaQuery.sizeOf(context).height * 0.21, // Adjust height
+                  autoPlay: true, // Enable auto-scrolling
+                  autoPlayInterval: Duration(seconds: 3),
+                  enlargeCenterPage: true, // Zoom effect
+                  viewportFraction: 0.8, // Show partial next image
+                  aspectRatio: 16 / 9,
+                  enableInfiniteScroll: true,
                 ),
+                items: imagePaths.map((image) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(15), // Rounded corners
+                    child: Image.asset(
+                      image,
+                      fit: BoxFit.cover, // Make images fit nicely
+                      width: double.infinity,
+                    ),
+                  );
+                }).toList(),
               ),
+
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              //   child: Container(
+              //     padding: EdgeInsets.all(20),
+              //     decoration: BoxDecoration(
+              //         color: Colors.pink.shade100,
+              //         borderRadius: BorderRadius.circular(12)),
+              //     child: Row(
+              //       children: [
+              //         Container(
+              //             height: 100,
+              //             width: 100,
+              //             child: LottieBuilder.network(
+              //                 "https://lottie.host/4dfc91ff-dd16-4617-803f-85cb4e4f0c7f/ceb4eLE4ap.json")),
+
+              //         SizedBox(
+              //           width: 20,
+              //         ),
+
+              //         // text
+              //         Expanded(
+              //           child: Column(
+              //             crossAxisAlignment: CrossAxisAlignment.start,
+              //             children: [
+              //               Text(
+              //                 "How do you feel?",
+              //                 style: TextStyle(
+              //                     fontSize: 16, fontWeight: FontWeight.bold),
+              //               ),
+              //               SizedBox(
+              //                 height: 12,
+              //               ),
+              //               Text(
+              //                 "Fill out your Medical Card Right Now",
+              //                 style: TextStyle(fontSize: 14),
+              //               ),
+              //               SizedBox(
+              //                 height: 12,
+              //               ),
+              //               Container(
+              //                 padding: EdgeInsets.all(12),
+              //                 decoration: BoxDecoration(
+              //                     color: Colors.deepPurple,
+              //                     borderRadius: BorderRadius.circular(12)),
+              //                 child: Center(
+              //                     child: Text(
+              //                   "Get Started",
+              //                   style: TextStyle(color: Colors.white),
+              //                 )),
+              //               )
+              //             ],
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
 
               // search area
 
@@ -195,7 +224,7 @@ class _UserHomePageState extends State<UserHomePage> {
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 16.0), // Adjusted vertical padding
-                      hintText: "Search for Doctors here",
+                      hintText: "Search for Doctors Name / Speciality",
                       hintStyle: TextStyle(
                         color: Colors.grey.shade600, // Softer hint text color
                         fontSize: 16.0, // Readable size
@@ -280,12 +309,12 @@ class _UserHomePageState extends State<UserHomePage> {
                         Map<String, dynamic> data = doc.data();
 
                         String name = data['display_name'].toLowerCase();
-                        String location = data['Location'].toLowerCase();
+                        String speciality = data['Speciality'].toLowerCase();
 
                         // Check if searchText matches the name or location
                         return searchText.isEmpty ||
                             name.contains(searchText) ||
-                            location.contains(searchText);
+                            speciality.contains(searchText);
                       }).map((doc) {
                         Map<String, dynamic> data = doc.data();
                         String name = data['display_name'];
