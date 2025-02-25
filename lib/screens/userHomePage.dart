@@ -224,7 +224,7 @@ class _UserHomePageState extends State<UserHomePage> {
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 16.0), // Adjusted vertical padding
-                      hintText: "Search for Doctors Name / Speciality",
+                      hintText: "Search Doctors Name / Speciality",
                       hintStyle: TextStyle(
                         color: Colors.grey.shade600, // Softer hint text color
                         fontSize: 16.0, // Readable size

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sehat_app/screens/adminScreens/addAdmin.dart';
 import 'package:sehat_app/screens/adminScreens/addDoctor.dart';
 import 'package:sehat_app/screens/adminScreens/addMedicines.dart';
+import 'package:sehat_app/screens/adminScreens/displayAppointment.dart';
 import 'package:sehat_app/screens/adminScreens/displayMedicines.dart';
 import 'package:sehat_app/screens/adminScreens/displayOrders.dart';
 import 'package:sehat_app/widgets/adminCard.dart';
@@ -135,7 +136,16 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     },
                   ),
                   // SizedBox(width: 10), // Add space between the cards
-                  Container()
+                  AdminOptionTiles(
+                    tileName: "Display Appointments",
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DisplayAppointment(
+                                  full_name: widget.full_name)));
+                    },
+                  ),
                 ],
               ),
             ],
