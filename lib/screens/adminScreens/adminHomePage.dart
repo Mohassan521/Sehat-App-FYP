@@ -110,7 +110,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   ),
                   SizedBox(width: 10), // Add space between the cards
                   AdminOptionTiles(
-                    tileName: "Display Orders",
+                    tileName: "Show Orders",
                     onTap: () {
                       Navigator.push(
                           context,
@@ -125,7 +125,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   AdminOptionTiles(
-                    tileName: "Display Medicines",
+                    tileName: "Show Medicines",
                     onTap: () {
                       Navigator.push(
                           context,
@@ -137,7 +137,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   ),
                   // SizedBox(width: 10), // Add space between the cards
                   AdminOptionTiles(
-                    tileName: "Display Appointments",
+                    tileName: "Manage Appointments",
                     onTap: () {
                       Navigator.push(
                           context,

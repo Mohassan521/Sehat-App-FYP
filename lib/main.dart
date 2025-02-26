@@ -26,7 +26,8 @@ void main() async {
       create: (_) => MedicineStockStatus(),
     ),
     ChangeNotifierProvider(create: (_) => AppointmentDateProvider()),
-    ChangeNotifierProvider(create: (_) => AppointmentStatusValueProvider())
+    ChangeNotifierProvider(create: (_) => AppointmentStatusValueProvider()),
+    ChangeNotifierProvider(create: (_) => PasswordHide()),
   ], child: const MyApp()));
 }
 

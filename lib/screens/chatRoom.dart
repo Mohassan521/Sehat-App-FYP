@@ -186,7 +186,7 @@ class _ChatRoomState extends State<ChatRoom> {
                 enableFeedback: false,
                 onPressed: () {
                   // print("Current user and other user ID: ${currentUser!.id} ${otherUser!.id}");
-                  _channelController = "test_channel";
+                  _channelController = "video_call";
                   print("channel showing $_channelController");
 
                   if (_channelController.isNotEmpty) {
@@ -195,6 +195,8 @@ class _ChatRoomState extends State<ChatRoom> {
                         MaterialPageRoute(
                             builder: (context) => CallScreen(
                                   channelName: _channelController,
+                                  user_id: currentUser!.id,
+                                  user_name: currentUser?.firstName ?? "",
                                 )));
                   }
                 },

@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sehat_app/Provider/provider.dart';
 import 'package:sehat_app/Utils/Utils.dart';
 import 'package:sehat_app/services/database_service.dart';
 
@@ -12,7 +14,8 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  
+  // bool isObsecure = true;
+
   void signIn(String email, String password) async {
     try {
       showDialog(
@@ -92,12 +95,21 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 height: 12,
               ),
-              TextFormField(
-                controller: passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Enter Password',
-                  border: OutlineInputBorder(),
-                ),
+              Consumer<PasswordHide>(
+                builder: (context, value, child) {
+                  return TextFormField(
+                    obscureText: value.isHidden,
+                    controller: passwordController,
+                    decoration: InputDecoration(
+                        labelText: 'Enter Password',
+                        border: OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              value.update();
+                            },
+                            icon: const Icon(Icons.visibility))),
+                  );
+                },
               ),
             ],
           ),
@@ -107,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
           MaterialButton(
             onPressed: () {
               signIn(emailController.text, passwordController.text);
-      
+
               // generateLoginOTP();
             },
             child: Text(

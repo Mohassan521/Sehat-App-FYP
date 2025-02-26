@@ -23,9 +23,13 @@ class AdminOptionTiles extends StatelessWidget {
               children: [
                 Icon(Icons.add, size: 28, color: Colors.blueAccent),
                 SizedBox(height: 10),
-                Text(
-                  tileName,
-                  style: TextStyle(fontSize: 14.2, fontWeight: FontWeight.bold),
+                Center(
+                  child: Text(
+                    tileName,
+                    textAlign: TextAlign.center,
+                    style:
+                        TextStyle(fontSize: 14.2, fontWeight: FontWeight.bold),
+                  ),
                 )
               ],
             ),

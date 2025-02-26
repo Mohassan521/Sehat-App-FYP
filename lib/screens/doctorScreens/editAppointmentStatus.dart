@@ -1,3 +1,4 @@
+import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,10 +19,24 @@ class _EditAppointmentStatusState extends State<EditAppointmentStatus> {
   DatabaseService _databaseService = DatabaseService();
   late String _selectedStatus;
   String _channelController = "";
+  ChatUser? currentUser, otherUser;
   final List<String> appointmentStatus = [
     'Pending',
     'Completed',
   ];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    currentUser =
+        ChatUser(id: FirebaseAuth.instance.currentUser!.uid, firstName: "");
+    otherUser = ChatUser(
+      id: widget.data['user_id'] ?? widget.data['Patient ID'],
+      firstName: widget.data['display_name'] ?? widget.data['Patient Name'],
+      // profileImage: widget.chatUser?.pfpURL
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -250,6 +265,8 @@ class _EditAppointmentStatusState extends State<EditAppointmentStatus> {
                     MaterialPageRoute(
                       builder: (context) => CallScreen(
                         channelName: _channelController,
+                        user_id: currentUser!.id,
+                        user_name: currentUser?.firstName ?? "",
                       ),
                     ),
                   );

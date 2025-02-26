@@ -102,3 +102,14 @@ class AppointmentDateProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+class PasswordHide extends ChangeNotifier {
+  bool _ishidden = true;
+
+  bool get isHidden => _ishidden;
+
+  void update() {
+    _ishidden = !_ishidden;
+    notifyListeners();
+  }
+}

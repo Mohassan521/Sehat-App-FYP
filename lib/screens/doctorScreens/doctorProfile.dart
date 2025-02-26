@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:sehat_app/Provider/provider.dart';
 import 'package:sehat_app/screens/callScreen.dart';
 import 'package:sehat_app/screens/chatRoom.dart';
+import 'package:sehat_app/screens/paymentScreen.dart';
 import 'package:sehat_app/services/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,8 +25,10 @@ class DoctorProfileScreen extends StatefulWidget {
   State<DoctorProfileScreen> createState() => _DoctorProfileScreenState();
 }
 
-class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
+class _DoctorProfileScreenState extends State<DoctorProfileScreen>
+    with TickerProviderStateMixin {
   final GetIt _getIt = GetIt.instance;
+  AnimationController? _bottomSheetAnimationController;
 
   // late AuthService _authService;
   // late NavigationService _navigationService;
@@ -42,10 +45,21 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
     super.initState();
     _databaseService = _getIt.get<DatabaseService>();
     checkAvailability();
+    _bottomSheetAnimationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 680), // Customize duration as needed
+    );
 
     currentUser = ChatUser(
         id: FirebaseAuth.instance.currentUser!.uid,
         firstName: widget.full_name);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _bottomSheetAnimationController?.dispose();
   }
 
   void checkAvailability() {
@@ -150,6 +164,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         String fees, String timings, String docLocation) {
       showModalBottomSheet(
           context: context,
+          transitionAnimationController: _bottomSheetAnimationController,
           builder: (context) {
             return Padding(
               padding:
@@ -258,49 +273,58 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                   ),
                   MaterialButton(
                     onPressed: () async {
-                      if (Provider.of<AppointmentDateProvider>(context,
-                                  listen: false)
-                              .selectedDate !=
-                          null) {
-                        int apid = Random().nextInt(900);
-                        SharedPreferences sp =
-                            await SharedPreferences.getInstance();
-                        CollectionReference ref = FirebaseFirestore.instance
-                            .collection("Appointments");
-                        ref.doc(apid.toString()).set({
-                          "Appointment id": apid,
-                          "Doctor Name": widget.docData["display_name"],
-                          "Patient Name": widget.full_name,
-                          "Patient Contact": sp.getString("contact"),
-                          "Doctor Fees": widget.docData["Fees"],
-                          "Patient ID": sp.getString("id"),
-                          "Doctor ID": widget.docData["user_id"],
-                          "Appointment Timings":
-                              widget.docData['appointment_timings']["from"] +
-                                  "-" +
-                                  widget.docData['appointment_timings']["to"],
-                          "Appointment Date":
-                              "${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.day}-${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.month}-${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.year}",
-                          "Appointment Status": "Pending",
-                          // "Speciality": widget.docData['Speciality'],
-                        }).then((val) {
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content:
-                                    Text('Appointment Created Successfully')),
-                          );
-                        });
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            backgroundColor: Colors.red,
-                            content: Text(
-                              'You need to select appointment date',
-                              style: TextStyle(color: Colors.white),
-                            )));
-                      }
+                      SharedPreferences sp =
+                          await SharedPreferences.getInstance();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PaymentScreen(
+                                    details: widget.docData,
+                                    patientName: sp.getString("fullName") ?? "",
+                                  )));
+                      // if (Provider.of<AppointmentDateProvider>(context,
+                      //             listen: false)
+                      //         .selectedDate !=
+                      //     null) {
+                      //   int apid = Random().nextInt(900);
+                      //   SharedPreferences sp =
+                      //       await SharedPreferences.getInstance();
+                      //   CollectionReference ref = FirebaseFirestore.instance
+                      //       .collection("Appointments");
+                      //   ref.doc(apid.toString()).set({
+                      //     "Appointment id": apid,
+                      //     "Doctor Name": widget.docData["display_name"],
+                      //     "Patient Name": widget.full_name,
+                      //     "Patient Contact": sp.getString("contact"),
+                      //     "Doctor Fees": widget.docData["Fees"],
+                      //     "Patient ID": sp.getString("id"),
+                      //     "Doctor ID": widget.docData["user_id"],
+                      //     "Appointment Timings":
+                      //         widget.docData['appointment_timings']["from"] +
+                      //             "-" +
+                      //             widget.docData['appointment_timings']["to"],
+                      //     "Appointment Date":
+                      //         "${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.day}-${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.month}-${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.year}",
+                      //     "Appointment Status": "Pending",
+                      //     // "Speciality": widget.docData['Speciality'],
+                      //   }).then((val) {
+                      //     Navigator.pop(context);
+                      //     ScaffoldMessenger.of(context).showSnackBar(
+                      //       SnackBar(
+                      //           content:
+                      //               Text('Appointment Created Successfully')),
+                      //     );
+                      //   });
+                      // } else {
+                      //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      //       backgroundColor: Colors.red,
+                      //       content: Text(
+                      //         'You need to select appointment date',
+                      //         style: TextStyle(color: Colors.white),
+                      //       )));
+                      // }
                     },
-                    child: const Text("Confirm Appointment"),
+                    child: const Text("Proceed"),
                     minWidth: double.infinity,
                     color: Colors.purple,
                     textColor: Colors.white,
@@ -476,13 +500,16 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                         isAvailable == true
                             ? MaterialButton(
                                 onPressed: () {
-                                  _channelController = currentUser!.id;
+                                  _channelController = "video_call";
                                   if (_channelController.isNotEmpty) {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => CallScreen(
                                           channelName: _channelController,
+                                          user_id: currentUser!.id,
+                                          user_name:
+                                              currentUser?.firstName ?? "",
                                         ),
                                       ),
                                     );
@@ -532,7 +559,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         ),
         ConstrainedBox(
           constraints:
-              BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.55),
+              BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.48),
           child: Text(
             value,
             textAlign: TextAlign.end,

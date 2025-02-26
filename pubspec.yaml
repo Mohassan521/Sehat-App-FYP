@@ -52,7 +52,8 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^27.1.53
   path_provider: ^2.1.4
   mime: ^1.0.6
-  agora_uikit: ^1.1.0
+  # agora_uikit: ^1.1.0
+  zego_uikit_prebuilt_call: ^4.16.20
   # sqflite: ^2.4.1
   persistent_shopping_cart: ^0.0.7
   input_quantity: ^2.5.0
