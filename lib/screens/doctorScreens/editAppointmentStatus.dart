@@ -258,18 +258,18 @@ class _EditAppointmentStatusState extends State<EditAppointmentStatus> {
               icon: Icons.call,
               onPressed: () {
                 // Call logic here
-                _channelController = FirebaseAuth.instance.currentUser!.uid;
+                _channelController = "video_call";
+                print("channel showing $_channelController");
+
                 if (_channelController.isNotEmpty) {
                   Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CallScreen(
-                        channelName: _channelController,
-                        user_id: currentUser!.id,
-                        user_name: currentUser?.firstName ?? "",
-                      ),
-                    ),
-                  );
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CallScreen(
+                                channelName: _channelController,
+                                user_id: currentUser!.id,
+                                user_name: currentUser?.firstName ?? "",
+                              )));
                 }
               },
             ),

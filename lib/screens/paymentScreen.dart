@@ -27,256 +27,271 @@ class _PaymentScreenState extends State<PaymentScreen> {
       appBar: AppBar(
         title: Text(
           "Appointment Details",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1.1,
+          ),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
-        elevation: 0,
+        elevation: 4,
         backgroundColor: Colors.deepPurple,
         centerTitle: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(16),
+          ),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 12),
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.deepPurple.shade50,
+              Colors.deepPurple.shade100,
+            ],
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDetailCard(),
+              const SizedBox(height: 24),
+              _buildPaymentSection(context),
+              const SizedBox(height: 24),
+              _buildConfirmationButton(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailCard() {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Patient Name: "),
-                Text(widget.patientName),
-              ],
+            _buildDetailRow("Patient Name:", widget.patientName),
+            const Divider(height: 24),
+            _buildDetailRow(
+              "Appointment Timings:",
+              "${widget.details['appointment_timings']["from"]} - ${widget.details['appointment_timings']["to"]}",
             ),
-            SizedBox(
-              height: 10,
+            const Divider(height: 24),
+            _buildDetailRow("Doctor Fees:", widget.details["Fees"]),
+            const Divider(height: 24),
+            _buildDetailRow(
+              "Appointment Day:",
+              _formattedSelectedDate(context),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Appointment Timings: "),
-                Text(
-                    "${widget.details['appointment_timings']["from"]} - ${widget.details['appointment_timings']["to"]}"),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Doctor Fees: "),
-                Text(widget.details["Fees"]),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Appointment Day: "),
-                Text(
-                    "${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.day}-${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.month}-${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.year}"),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Easy Paisa / Jazzcash (for Payment): "),
-                Text(number),
-              ],
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            Text("Your Bank Account Holder"),
-            SizedBox(
-              height: 5,
-            ),
-            Container(
-              height: MediaQuery.sizeOf(context).height * 0.055,
-              padding: EdgeInsets.only(left: 9),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5.5),
-                // color: Colors.white,
-
-                border: Border.all(
-                  color: Colors.black,
-                  width: 1,
-                ),
-              ),
-              child: DropdownButton<String>(
-                alignment: Alignment.center,
-                isExpanded: true,
-                underline: SizedBox(),
-                value: bankAccount,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    bankAccount = newValue ?? bankAccount;
-                  });
-                },
-                items: [
-                  DropdownMenuItem<String>(
-                      value: '',
-                      child: Center(
-                          child: Text(
-                        '',
-                        style: TextStyle(fontSize: 12),
-                      ))),
-                  DropdownMenuItem<String>(
-                      value: 'Meezan Bank Ltd.',
-                      child: Center(
-                          child: Text(
-                        'Meezan Bank Ltd.',
-                        style: TextStyle(fontSize: 12),
-                      ))),
-                  DropdownMenuItem<String>(
-                      value: 'Dubai Islamic Bank',
-                      child: Center(
-                          child: Text('Dubai Islamic Bank',
-                              style: TextStyle(fontSize: 12)))),
-                  DropdownMenuItem<String>(
-                      value: 'Bank Alfalah',
-                      child: Center(
-                          child: Text('Bank Alfalah',
-                              style: TextStyle(fontSize: 12)))),
-                  DropdownMenuItem<String>(
-                      value: 'NBP',
-                      child: Center(
-                          child: Text('NBP', style: TextStyle(fontSize: 12)))),
-                  DropdownMenuItem<String>(
-                      value: 'HBL',
-                      child: Center(
-                          child: Text('HBL', style: TextStyle(fontSize: 12)))),
-                  DropdownMenuItem<String>(
-                      value: 'UBL',
-                      child: Center(
-                          child: Text('UBL', style: TextStyle(fontSize: 12)))),
-                  DropdownMenuItem<String>(
-                      value: 'MCB',
-                      child: Center(
-                          child: Text('MCB', style: TextStyle(fontSize: 12)))),
-                  DropdownMenuItem<String>(
-                      value: 'Allied Bank Ltd.',
-                      child: Center(
-                          child: Text('Allied Bank Ltd.',
-                              style: TextStyle(fontSize: 12)))),
-                  DropdownMenuItem<String>(
-                      value: 'Askari Bank Ltd.',
-                      child: Center(
-                          child: Text('Askari Bank Ltd.',
-                              style: TextStyle(fontSize: 12)))),
-                  DropdownMenuItem<String>(
-                      value: 'Standard Chartered',
-                      child: Center(
-                          child: Text('Standard Chartered',
-                              style: TextStyle(fontSize: 12)))),
-                  DropdownMenuItem<String>(
-                      value: 'JazzCash',
-                      child: Center(
-                          child: Text('JazzCash',
-                              style: TextStyle(fontSize: 12)))),
-                  DropdownMenuItem<String>(
-                      value: 'Nayapay',
-                      child: Center(
-                          child:
-                              Text('Nayapay', style: TextStyle(fontSize: 12)))),
-                  DropdownMenuItem<String>(
-                      value: 'Sadapay',
-                      child: Center(
-                          child:
-                              Text('Sadapay', style: TextStyle(fontSize: 12)))),
-                  DropdownMenuItem<String>(
-                      value: 'Easypaisa',
-                      child: Center(
-                          child: Text('Easypaisa',
-                              style: TextStyle(fontSize: 12)))),
-                  DropdownMenuItem<String>(
-                      value: 'Al Baraka Bank',
-                      child: Center(
-                          child: Text('Al Baraka Bank',
-                              style: TextStyle(fontSize: 12)))),
-                ],
-              ),
-            ),
-
-            SizedBox(
-              height: 15,
-            ),
-            Text("Your Account Number"),
-            SizedBox(height: 5),
-            TextFormField(
-                // controller: name,
-                decoration: InputDecoration(border: OutlineInputBorder())),
-            SizedBox(
-              height: 20,
-            ),
-            // Text("Full Name"),
-            // SizedBox(height: 5),
-            // TextFormField(
-            //     // controller: name,
-            //     decoration: InputDecoration(border: OutlineInputBorder())),
-            MaterialButton(
-              onPressed: () async {
-                if (Provider.of<AppointmentDateProvider>(context, listen: false)
-                        .selectedDate !=
-                    null) {
-                  int apid = Random().nextInt(900);
-                  SharedPreferences sp = await SharedPreferences.getInstance();
-                  CollectionReference ref =
-                      FirebaseFirestore.instance.collection("Appointments");
-                  ref.doc(apid.toString()).set({
-                    "Appointment id": apid,
-                    "Doctor Name": widget.details["display_name"],
-                    "Patient Name": widget.patientName,
-                    "Patient Contact": sp.getString("contact"),
-                    "Doctor Fees": widget.details["Fees"],
-                    "Patient ID": sp.getString("id"),
-                    "Doctor ID": widget.details["user_id"],
-                    "Appointment Timings": widget.details['appointment_timings']
-                            ["from"] +
-                        "-" +
-                        widget.details['appointment_timings']["to"],
-                    "Appointment Date":
-                        "${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.day}-${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.month}-${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.year}",
-                    "Appointment Status": "Pending",
-                    // "Speciality": widget.docData['Speciality'],
-                  }).then((val) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CompletedAnyTask(
-                                message: "Appointment Confirmed",
-                                path: "assets/images/done.json",
-                                name: widget.patientName)));
-                    // Navigator.pop(context);
-                    // ScaffoldMessenger.of(context).showSnackBar(
-                    //   SnackBar(
-                    //       content: Text('Appointment Created Successfully')),
-                    // );
-                  });
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      backgroundColor: Colors.red,
-                      content: Text(
-                        'You need to select appointment date',
-                        style: TextStyle(color: Colors.white),
-                      )));
-                }
-              },
-              child: Text("Confirm Appointment"),
-              minWidth: double.infinity,
-              color: Colors.purple,
-              textColor: Colors.white,
-              padding: const EdgeInsets.all(15),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-            )
+            const Divider(height: 24),
+            _buildDetailRow("Payment Number:", number),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade700,
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Colors.deepPurple,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaymentSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Your Account Details",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.deepPurple.shade800,
+          ),
+        ),
+        const SizedBox(height: 16),
+        _buildBankDropdown(context),
+        const SizedBox(height: 16),
+        TextFormField(
+          decoration: InputDecoration(
+            labelText: "Account Number",
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+            prefixIcon: const Icon(Icons.account_balance_wallet,
+                color: Colors.deepPurple),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBankDropdown(BuildContext context) {
+    final banks = [
+      'Meezan Bank Ltd.',
+      'Dubai Islamic Bank',
+      'Bank Alfalah',
+      'NBP',
+      'HBL',
+      'UBL',
+      'MCB',
+      'Allied Bank Ltd.',
+      'Askari Bank Ltd.',
+      'Standard Chartered',
+      'JazzCash',
+      'Nayapay',
+      'Sadapay',
+      'Easypaisa',
+      'Al Baraka Bank',
+    ];
+
+    return DropdownButtonFormField<String>(
+      value: bankAccount,
+      decoration: InputDecoration(
+        // labelText: "Bank Account Holder",
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
+        prefixIcon: const Icon(Icons.account_balance, color: Colors.deepPurple),
+      ),
+      items: [
+        const DropdownMenuItem(
+            value: '',
+            child: Text("Select Bank", style: TextStyle(color: Colors.grey))),
+        ...banks
+            .map((bank) => DropdownMenuItem(
+                  value: bank,
+                  child: Text(bank),
+                ))
+            .toList(),
+      ],
+      onChanged: (String? newValue) {
+        setState(() {
+          bankAccount = newValue ?? bankAccount;
+        });
+      },
+    );
+  }
+
+  Widget _buildConfirmationButton() {
+    return MaterialButton(
+      onPressed: () async {
+        if (Provider.of<AppointmentDateProvider>(context, listen: false)
+                .selectedDate !=
+            null) {
+          int apid = Random().nextInt(900);
+          SharedPreferences sp = await SharedPreferences.getInstance();
+          CollectionReference ref =
+              FirebaseFirestore.instance.collection("Appointments");
+          ref.doc(apid.toString()).set({
+            "Appointment id": apid,
+            "Doctor Name": widget.details["display_name"],
+            "Patient Name": widget.patientName,
+            "Patient Contact": sp.getString("contact"),
+            "Doctor Fees": widget.details["Fees"],
+            "Patient ID": sp.getString("id"),
+            "Doctor ID": widget.details["user_id"],
+            "Appointment Timings": widget.details['appointment_timings']
+                    ["from"] +
+                "-" +
+                widget.details['appointment_timings']["to"],
+            "Appointment Date":
+                "${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.day}-${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.month}-${Provider.of<AppointmentDateProvider>(context, listen: false).selectedDate?.year}",
+            "Appointment Status": "Pending",
+            // "Speciality": widget.docData['Speciality'],
+          }).then((val) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => CompletedAnyTask(
+                        message: "Appointment Confirmed",
+                        path: "assets/images/done.json",
+                        name: widget.patientName)));
+            // Navigator.pop(context);
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(
+            //       content: Text('Appointment Created Successfully')),
+            // );
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Colors.red,
+              content: Text(
+                'You need to select appointment date',
+                style: TextStyle(color: Colors.white),
+              )));
+        }
+      },
+      child: const Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.check_circle, color: Colors.white),
+          SizedBox(width: 8),
+          Text(
+            "Confirm Appointment",
+            style: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
+          ),
+        ],
+      ),
+      minWidth: double.infinity,
+      height: 52,
+      color: Colors.deepPurple,
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    );
+  }
+
+  String _formattedSelectedDate(BuildContext context) {
+    final dateProvider =
+        Provider.of<AppointmentDateProvider>(context, listen: false);
+    final date = dateProvider.selectedDate;
+    return date != null
+        ? "${date.day}-${date.month}-${date.year}"
+        : "Not selected";
   }
 }
